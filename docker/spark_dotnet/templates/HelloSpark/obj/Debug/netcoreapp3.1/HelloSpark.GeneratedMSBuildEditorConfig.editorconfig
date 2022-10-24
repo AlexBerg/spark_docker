@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = HelloSpark
+build_property.ProjectDir = c:\repos\self_learning\spark_docker\docker\spark_dotnet\templates\HelloSpark\

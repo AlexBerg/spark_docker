@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "dgSpecHash": "OKI7tIZSuAp8rYVNOyc1lbMz+q3rKD8cn3Uecg69QdZuSBNwZnPw9Qm0Ls5wAhZtuqh3S0z0svZPaq9N5C4KMA==",
+  "success": true,
+  "projectFilePath": "c:\\repos\\self_learning\\spark_dotnet\\docker-setup\\dotnet-spark\\templates\\HelloSpark\\HelloSpark.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Alexander\\.nuget\\packages\\apache.arrow\\2.0.0\\apache.arrow.2.0.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.data.analysis\\0.18.0\\microsoft.data.analysis.0.18.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.ml.dataview\\1.6.0\\microsoft.ml.dataview.1.6.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\microsoft.spark\\2.1.1\\microsoft.spark.2.1.1.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\newtonsoft.json\\11.0.2\\newtonsoft.json.11.0.2.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\razorvine.pyrolite\\4.26.0\\razorvine.pyrolite.4.26.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\razorvine.serpent\\1.29.0\\razorvine.serpent.1.29.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.collections.immutable\\1.5.0\\system.collections.immutable.1.5.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.runtime\\4.3.0\\system.runtime.4.3.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.0\\system.runtime.compilerservices.unsafe.4.7.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
+    "C:\\Users\\Alexander\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.2\\system.threading.tasks.extensions.4.5.2.nupkg.sha512"
+  ],
+  "logs": []
+}

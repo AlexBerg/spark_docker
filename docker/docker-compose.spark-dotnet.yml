@@ -1,0 +1,58 @@
+version: '3'
+name: "spark_dotnet"
+
+services:
+  mssql:
+    container_name: mssql
+    build:
+      context: ../shared
+      dockerfile: Dockerfile.sql-server
+    image: mssql:2019
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=MostSecretPW!
+    ports:
+      - 1433:1433
+    volumes:
+      - "./container_data/mssql/log:/var/opt/mssql/log"
+      - "./container_data/mssql/data:/var/opt/mssql/data"
+      - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
+  
+  hive-metastore:
+    container_name: hive-metastore
+    build:
+      context: ../shared
+      dockerfile: Dockerfile.hive
+    entrypoint: /scripts/init-hive.sh
+    image: hive:2.3.9
+    ports:
+      - 10000:10000
+      - 9083:9083
+    links:
+      - "mssql:mssql"
+    volumes:
+      - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
+    depends_on:
+      - mssql
+
+  dotnet_spark:
+    container_name: dotnet-spark
+    build: 
+      context: .
+      dockerfile: ./spark_dotnet/Dockerfile.dotnet-spark
+      args:
+        - DOTNET_CORE_VERSION=3.1
+        - DOTNET_SPARK_VERSION=2.1.1
+        - SPARK_VERSION=3.2.1
+        - HADOOP_VERSION=2.7
+    image: dotnet-spark:2.1.1-3.2.1
+    ports: 
+      - 5567:5567
+      - 4040:4040
+    volumes:
+      - "../:/workspace"
+      - "./container_data/table_data:/shared_data/table_data"
+      - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
+    links:
+      - "mssql:mssql"
+      - "hive-metastore:hive-metastore"
