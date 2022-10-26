@@ -22,7 +22,7 @@ main() {
 
     if [[ $build_dotnet == false ]] && [[ $build_conda == false ]]
     then
-        echo "No build option provided. Use -d to build spark with dotnet and -c for spark with conda."
+        echo "No build option provided. Use -d/--dotnet to build spark with dotnet or -c/--conda for spark with conda."
     else
         build_java_base
     fi
