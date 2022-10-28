@@ -5,7 +5,7 @@ The general setup is one container for spark, one for hive and one for sql serve
 database for the metastore.
 
 There are currently two different configurations available: spark with conda to be used for pyspark based development or a .NET spark configuration for development
-in .NET.
+in .NET. Both setups include support for Delta Lake.
 
 ### Versions used
 * Spark 3.2.1
@@ -14,6 +14,7 @@ in .NET.
 * .NET Core 3.1
 * .NET Spark 2.1.1
 * Conda latest linux version
+* Delta lake 1.2.1
 
 ## Spark with conda container
 This container comes with latest linux version of conda pre-installed and initalized in the bash shell.
