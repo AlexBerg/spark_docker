@@ -1,6 +1,6 @@
 # Spark docker setup
 ## Introduction
-The purpose for this project is to provide a easy to use dockerized spark environment setup that resembels something you would find out in the "real" world.
+The purpose for this project is to provide a easy to use dockerized spark environment setup that resembels something you would find out in the "real" world to use for local development.
 The general setup is one container for spark, one for hive and one for sql server. This reflects a spark setup with a external hive metastore using sql server as the
 database for the metastore.
 
