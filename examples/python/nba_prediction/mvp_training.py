@@ -32,6 +32,7 @@ if __name__ == "__main__":
         .drop("season_mvp", "player_id_mvp")\
         .fillna({"share": 0.0})\
         .filter("season != 2022")
+        
 
     feature_columns = ["g", "gs", "pts_per_game", "per", "ast_percent", "stl_percent", "blk_percent", "ts_percent", "trb_per_game", "ast_per_game",
         "stl_per_game", "blk_per_game", "tov_per_game", "dws", "ows", "bpm", "vorp"]

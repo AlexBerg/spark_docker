@@ -10,7 +10,7 @@ namespace NBAPrediction.Services
     internal class DataModelingService : IDataModelingService
     {
         private readonly IHelperService _helperService;
-        private readonly string _pathToRaw = "/workspace/NBAPrediction/datasets/";
+        private readonly string _pathToRaw = "/workspace/examples/datasets/";
 
         public DataModelingService(IHelperService helperService)
         {
