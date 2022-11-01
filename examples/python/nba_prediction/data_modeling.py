@@ -75,7 +75,7 @@ def _create_team_tables(spark: SparkSession) -> DataFrame:
             F.col("n_rtg").alias("NetRating"),
             F.col("pace").alias("Pace"),
             F.col("f_tr").alias("FreeThrowRate"),
-            F.col("x3p_ar").alias("ThreePointAttemptRate"),
+            F.col("x3p_ar").alias("ThreePointerAttemptRate"),
             F.col("ts_percent").alias("TrueShootingPercentage"),
             F.col("e_fg_percent").alias("EffectiveFieldGoalPercentage"),
             F.col("tov_percent").alias("TurnoverPercentage"),
@@ -191,12 +191,52 @@ def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
             F.col("x3p_percent").alias("ThreePointerPercentage"),
             F.col("x2p_per_game").alias("TwoPointersPerGame"),
             F.col("x2pa_per_game").alias("TwoPointersAttemptedPerGame"),
-            F.col("x2p_percent").alias("TwoPointerPercentage"))
+            F.col("x2p_percent").alias("TwoPointerPercentage"),
+            F.col("e_fg_percent").alias("EffectiveFieldGoalPercentage"),
+            F.col("ft_per_game").alias("FreeThrowsPerGame"),
+            F.col("fta_per_game").alias("FreeThrowsAttemptedPerGame"),
+            F.col("ft_percent").alias("FreeThrowPercentage"),
+            F.col("orb_per_game").alias("OffensiveReboundsPerGame"),
+            F.col("drb_per_game").alias("DefensiveReboundsPerGame"),
+            F.col("trb_per_game").alias("TotalReboundsPerGame"),
+            F.col("ast_per_game").alias("AssistsPerGame"),
+            F.col("stl_per_game").alias("StealsPerGame"),
+            F.col("blk_per_game").alias("BlocksPerGame"),
+            F.col("tov_per_game").alias("TurnoversPerGame"),
+            F.col("pf_per_game").alias("PersonalFoulsPerGame"))\
+        .na.replace("NA", None)
+
+    player_per_game_stats = _cast_column_to_float(player_per_game_stats)
+
+    save_to_delta_table(player_per_game_stats, "PlayerSeasonStats")
 
 
 
 def _create_player_play_by_play_table(spark: SparkSession, teams: DataFrame):
-    raise Exception("bro")
+    play_by_play = read_from_csv(spark, _path_to_raw + "Player Play by Play.csv").filter("tm != 'TOT'")
+
+    play_by_play_cond = [play_by_play.tm == teams.TeamNameShort, play_by_play.season == teams.Season]
+
+    play_by_play = play_by_play.join(teams, play_by_play_cond)\
+        .select(F.col("player_id").alias("PlayerId"),
+            play_by_play.season.alias("Season"),
+            F.col("TeamId"),
+            F.col("pg_percent").alias("PointGuardPercent"),
+            F.col("sg_percent").alias("ShootingGuardPercent"),
+            F.col("sf_percent").alias("SmallForwardPercent"),
+            F.col("pf_percent").alias("PowerForwardPercent"),
+            F.col("c_percent").alias("CenterPercentage"),
+            F.col("on_court_plus_minus_per_100_poss").alias("OnCourtPlusMinusPer100Poss"),
+            F.col("net_plus_minus_per_100_poss").alias("NetPlusMinusPer100Poss"),
+            F.round(F.col("shooting_foul_drawn") / F.col("g"), 2).alias("ShootingFoulDrawnPerGame"),
+            F.round(F.col("offensive_foul_drawn") / F.col("g"), 2).alias("OffensiveFoulDrawnPerGame"),
+            F.round(F.col("points_generated_by_assists") / F.col("g"), 2).alias("PointsGeneratedByAssistsPerGame"),
+            F.round(F.col("and1") / F.col("g"), 2).alias("And1PerGame"))\
+        .na.replace("NA", None)
+
+    play_by_play = _cast_column_to_float(play_by_play)
+
+    save_to_delta_table(play_by_play, "PlayerSeasonPlayByPlayStats")
 
 
 def _cast_column_to_float(df: DataFrame) -> DataFrame:

@@ -90,7 +90,7 @@ namespace NBAPrediction.Services
                     F.Col("n_rtg").As("NetRating"),
                     F.Col("pace").As("Pace"),
                     F.Col("f_tr").As("FreeThrowRate"),
-                    F.Col("x3p_ar").As("ThreePointAttemptRate"),
+                    F.Col("x3p_ar").As("ThreePointerAttemptRate"),
                     F.Col("ts_percent").As("TrueShootingPercentage"),
                     F.Col("e_fg_percent").As("EffectiveFieldGoalPercentage"),
                     F.Col("tov_percent").As("TurnoverPercentage"),
@@ -206,10 +206,10 @@ namespace NBAPrediction.Services
                     F.Col("pf_percent").As("PowerForwardPercent"),
                     F.Col("c_percent").As("CenterPercent"),
                     F.Col("on_court_plus_minus_per_100_poss").As("OnCourtPlusMinusPer100Poss"),
-                    F.Col("net_plus_minus_per_100_poss").As("NetPlusMinutPer100Poss"),
+                    F.Col("net_plus_minus_per_100_poss").As("NetPlusMinusPer100Poss"),
                     F.Round(F.Col("shooting_foul_drawn") / F.Col("g"), 2).As("ShootingFoulDrawnPerGame"),
                     F.Round(F.Col("offensive_foul_drawn") / F.Col("g"), 2).As("OffensiveFoulDrawnPerGame"),
-                    F.Round(F.Col("points_generated_by_assists") / F.Col("g"), 2).As("PointsGeneratedByAssitsPerGame"),
+                    F.Round(F.Col("points_generated_by_assists") / F.Col("g"), 2).As("PointsGeneratedByAssistsPerGame"),
                     F.Round(F.Col("and1") / F.Col("g"), 2).As("And1PerGame"))
                 .Na().Replace("*", new Dictionary<string, string>() { { "NA", null } });
 
