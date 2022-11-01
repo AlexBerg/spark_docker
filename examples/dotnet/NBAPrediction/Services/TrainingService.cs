@@ -69,7 +69,7 @@ namespace NBAPrediction.Services
 
         private ITransformer TrainModel(MLContext mlContext, ML.Data.TextLoader.Column[] cols)
         {
-            var trainingData = LoadFromCsvFile(mlContext, "datasets/temp/mvp/training/*.csv", cols);
+            var trainingData = LoadFromCsvFile(mlContext, "temp/mvp/training/*.csv", cols);
 
             var pipeline = mlContext.Transforms
                 .Concatenate("Features",
@@ -86,16 +86,16 @@ namespace NBAPrediction.Services
 
         private (ML.Data.RegressionMetrics metrics, bool predictedMVP) EvaluateModel(SparkSession spark, MLContext mlContext, ITransformer model, ML.Data.TextLoader.Column[] cols)
         {
-            var testData = LoadFromCsvFile(mlContext, "datasets/temp/mvp/test/*.csv", cols);
+            var testData = LoadFromCsvFile(mlContext, "temp/mvp/test/*.csv", cols);
 
             var predictions = model.Transform(testData);
 
-            using (var stream = new System.IO.FileStream("datasets/temp/prediction.csv", System.IO.FileMode.Create))
+            using (var stream = new System.IO.FileStream("temp/prediction.csv", System.IO.FileMode.Create))
             {
                 mlContext.Data.SaveAsText(predictions, stream, ',', schema: false);
             }
 
-            var df = _helperService.ReadFromCsv(spark, "/workspace/NBAPrediction/datasets/temp/prediction.csv")
+            var df = _helperService.ReadFromCsv(spark, "/workspace/examples/dotnet/NBAPrediction/temp/prediction.csv")
                 .Select("PlayerId", "Share", "Score")
                 .WithColumn("Rank", F.When(F.Col("Share") == 0.0, 0)
                     .Otherwise(F.RowNumber().Over(Spark.Sql.Expressions.Window.OrderBy(F.Desc("Share")))).Cast("float"))
@@ -126,7 +126,7 @@ namespace NBAPrediction.Services
                     @"SELECT pt.*, a.Share, a.Award, a.WonAward FROM (
                         SELECT p.*, t.GamesPlayed AS TeamGamesPlayed, t.League, ROUND(t.Wins / t.GamesPlayed, 2) AS WinPercentage, t.AverageMarginOfVictory, t.NetRating FROM
                         (
-                            SELECT past.*, pst.PointsPerGame, pst.AssistsPerGame, pst.StealsPerGame, pst.TotalReboundsPerGame, pst.BlocksPerGame, pst.GamesPlayed, pst.GamesStarted, pst.MinutesPerGame, pbp.OnCourtPlusMinusPer100Poss, pbp.NetPlusMinutPer100Poss, pbp.PointsGeneratedByAssitsPerGame FROM 
+                            SELECT past.*, pst.PointsPerGame, pst.AssistsPerGame, pst.StealsPerGame, pst.TotalReboundsPerGame, pst.BlocksPerGame, pst.GamesPlayed, pst.GamesStarted, pst.MinutesPerGame, pbp.OnCourtPlusMinusPer100Poss, pbp.NetPlusMinusPer100Poss, pbp.PointsGeneratedByAssistsPerGame FROM 
                             PlayerSeasonStats AS pst
                             LEFT JOIN PlayerSeasonAdvancedStats AS past ON pst.PlayerId = past.PlayerId AND pst.Season = past.Season AND pst.TeamId = past.TeamId
                             LEFT JOIN PlayerSeasonPlayByPlayStats AS pbp ON pst.PlayerId = pbp.PlayerId AND pst.Season = pbp.Season AND pst.TeamId = pbp.TeamId
@@ -134,7 +134,7 @@ namespace NBAPrediction.Services
                         LEFT JOIN (
                             SELECT tst.*, team.League FROM
                             TeamSeasonStats AS tst
-                            LEFT JOIN Teams as team ON tst.TeamId = team.TeamId 
+                            LEFT JOIN Teams AS team ON tst.TeamId = team.TeamId 
                         ) AS t
                         ON p.TeamId = t.TeamId AND p.Season = t.Season
                         ) as pt
@@ -158,16 +158,16 @@ namespace NBAPrediction.Services
             var testData = mvpData.Filter($"Season = {season}");
 
             trainingData.Write().Format("csv").Option("header", true).Mode(SaveMode.Overwrite)
-                .Save("/workspace/NBAPrediction/datasets/temp/mvp/training");
+                .Save("/workspace/examples/dotnet/NBAPrediction/temp/mvp/training");
 
             testData.Write().Format("csv").Option("header", true).Mode(SaveMode.Overwrite)
-                .Save("/workspace/NBAPrediction/datasets/temp/mvp/test");
+                .Save("/workspace/examples/dotnet/NBAPrediction/temp/mvp/test");
         }
 
         private void CleanupTempFiles()
         {
-            if (System.IO.Directory.Exists("datasets/temp"))
-                System.IO.Directory.Delete("datasets/temp", true);
+            if (System.IO.Directory.Exists("temp"))
+                System.IO.Directory.Delete("temp", true);
         }
 
         private ML.Data.TextLoader.Column[] GetColumns(Spark.Sql.DataFrame df)
