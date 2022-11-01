@@ -136,11 +136,63 @@ def _create_player_award_share_table(spark: SparkSession, teams: DataFrame):
 
 
 def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: DataFrame):
-    raise Exception("bro")
+    advanced_stats = read_from_csv(spark, _path_to_raw + "Advanced.csv").filter("tm != 'TOT'")
+
+    advanced_stats_cond = [advanced_stats.tm == teams.TeamNameShort, advanced_stats.season == teams.Season]
+    advanced_stats = advanced_stats.join(teams, advanced_stats_cond)\
+        .select(F.col("player_id").alias("PlayerId"),
+            advanced_stats.season.alias("Season"),
+            F.col("TeamId"),
+            F.col("per").alias("PlayerEfficiencyRating"),
+            F.col("ts_percent").alias("TrueShootingPercentage"),
+            F.col("x3p_ar").alias("ThreePointAttemptRate"),
+            F.col("f_tr").alias("FreeThrowRate"),
+            F.col("orb_percent").alias("OffensiveReboundPercentage"),
+            F.col("drb_percent").alias("DefensiveReboundPercentage"),
+            F.col("trb_percent").alias("TotalReboundPercentage"),
+            F.col("ast_percent").alias("AssistPercentage"),
+            F.col("stl_percent").alias("StealPercentage"),
+            F.col("blk_percent").alias("BlockPercentage"),
+            F.col("tov_percent").alias("TurnoverPercentage"),
+            F.col("usg_percent").alias("UsagePercentage"),
+            F.col("ows").alias("OffensiveWinShares"),
+            F.col("dws").alias("DefensiveWinShares"),
+            F.col("ws").alias("WinShares"),
+            F.col("ws_48").alias("WinSharesPer48"),
+            F.col("obpm").alias("OffensiveBoxPlusMinus"),
+            F.col("dbmp").alias("DefensiveBoxPlusMinus"),
+            F.col("bpm").alias("BoxPlusMinues"),
+            F.col("vorp").alias("ValueOverReplacementPlayer"))\
+        .na.replace("NA", None)
+
+    advanced_stats = _cast_column_to_float(advanced_stats)
+
+    save_to_delta_table(advanced_stats, "PlayerSeasonAdvancedStats")
 
 
 def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
-    raise Exception("bro")
+    player_per_game_stats = read_from_csv(spark, _path_to_raw + "Player Per Game.csv").filter("tm != 'TOT'")
+
+    player_per_game_stats_cond = [player_per_game_stats.tm == teams.TeamNameShort, player_per_game_stats.season == teams.Season]
+
+    player_per_game_stats = player_per_game_stats.join(teams, player_per_game_stats_cond)\
+        .select(F.col("player_id").alias("PlayerId"),
+            player_per_game_stats.season.alias("Season"),
+            F.col("TeamId"),
+            F.col("g").alias("GamesPlayed").cast(T.ShortType()),
+            F.col("gs").alias("GamesStarted").cast(T.ShortType()),
+            F.col("mp_per_game").alias("MinutesPerGame"),
+            F.col("pts_per_game").alias("PointsPerGame"),
+            F.col("fg_per_game").alias("FieldGoalsPerGame"),
+            F.col("fga_per_game").alias("FieldGoalsAttemptedPerGame"),
+            F.col("fg_percent").alias("FieldGoalPercentage"),
+            F.col("x3p_per_game").alias("ThreePointersPerGame"),
+            F.col("x3pa_per_game").alias("ThreePointersAttemptedPerGame"),
+            F.col("x3p_percent").alias("ThreePointerPercentage"),
+            F.col("x2p_per_game").alias("TwoPointersPerGame"),
+            F.col("x2pa_per_game").alias("TwoPointersAttemptedPerGame"),
+            F.col("x2p_percent").alias("TwoPointerPercentage"))
+
 
 
 def _create_player_play_by_play_table(spark: SparkSession, teams: DataFrame):
