@@ -38,27 +38,12 @@ def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame
         .na.fill(0.0, ["Share"])\
         .na.fill(False, ["WonAward"])
     
-    return mvp_award_share_with_stats   
+    return mvp_award_share_with_stats
 
+def _train_and_evaluate_model(spark: SparkSession, dataset: DataFrame, assembler: VectorAssembler, season: int) -> tuple(float, bool):
+    train = dataset.filter(f"Season != {season}")
+    test = dataset.filter(f"Season = {season}")
 
-if __name__ == "__main__":
-
-    spark = get_spark_session()
-
-    if check_if_nba_tables_exist(spark) == False:
-        drop_all_nba_tables(spark)
-        create_nba_delta_tables(spark) 
-
-    dataset = _create_mvp_award_share_with_stats_dataset(spark)       
-
-    feature_columns = ["ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares", "TotalReboundPercentage", "AssistPercentage", "StealPercentage",
-        "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssitsPerGame", "NetPlusMinutPer100Poss", "AssistsPerGame",
-        "StealsPerGame", "GamesStarted", "TotalReboundsPerGame", "BlocksPerGame", "WinPercentage"]
-
-    train = dataset.filter("Season != 2022")
-    test = dataset.filter("Season = 2022")
-
-    assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
     train = assembler.transform(train)
     test = assembler.transform(test)
 
@@ -78,7 +63,41 @@ if __name__ == "__main__":
 
     evaluator = RegressionEvaluator(predictionCol="predicted_share", labelCol="share", metricName="rmse")
 
+    correctly_predicted_winner = predictions.where("Rank = 1 AND predicted_rank = 1").count() == 1
+
     rmse = evaluator.evaluate(predictions)
 
     print(rmse)
+
+    return (rmse, correctly_predicted_winner)
+
+
+
+if __name__ == "__main__":
+
+    spark = get_spark_session()
+
+    if check_if_nba_tables_exist(spark) == False:
+        drop_all_nba_tables(spark)
+        create_nba_delta_tables(spark) 
+
+    dataset = _create_mvp_award_share_with_stats_dataset(spark)       
+
+    feature_columns = ["ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares", "TotalReboundPercentage", "AssistPercentage", "StealPercentage",
+        "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssitsPerGame", "NetPlusMinutPer100Poss", "AssistsPerGame",
+        "StealsPerGame", "GamesStarted", "TotalReboundsPerGame", "BlocksPerGame", "WinPercentage"]
+
+    assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
+
+    seasonToPredict = 1956 # First season nba mvp was awar    
+    latestSeason = 2022
+
+    rmse_list = []
+
+    while seasonToPredict <= latestSeason:
+        (rmse, correctly_predicted_winner) = _train_and_evaluate_model(spark, dataset, feature_columns, assembler, seasonToPredict)
+        rmse_list.append(rmse)
+
+        seasonToPredict += 1
+
 

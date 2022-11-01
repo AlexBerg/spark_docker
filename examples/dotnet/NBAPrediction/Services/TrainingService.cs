@@ -23,7 +23,7 @@ namespace NBAPrediction.Services
             _helperService = helperService;
         }
 
-        public void TrainAndEvaluateMVPPredicitionModel(SparkSession spark)
+        public void TrainAndEvaluateMVPPredictionModel(SparkSession spark)
         {
             try
             {

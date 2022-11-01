@@ -13,7 +13,7 @@ namespace NBAPrediction
 
             var training = new TrainingService(helper);
 
-            training.TrainAndEvaluateMVPPredicitionModel(spark);
+            training.TrainAndEvaluateMVPPredictionModel(spark);
         }
     }
 }
