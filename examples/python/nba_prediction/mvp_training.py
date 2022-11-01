@@ -1,5 +1,4 @@
 from helper_functions import get_spark_session, read_from_delta
-from data_cleaning_shared import get_player_per_game_stats
 
 from pyspark.ml import Pipeline
 from pyspark.ml.stat import Correlation

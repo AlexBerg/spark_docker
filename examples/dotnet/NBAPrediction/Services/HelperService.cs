@@ -17,7 +17,7 @@ namespace NBAPrediction.Services
                 .GetOrCreate();
         }
 
-        public DataFrame LoadFromCsv(SparkSession spark, string path)
+        public DataFrame ReadFromCsv(SparkSession spark, string path)
         {
             return spark.Read()
                 .Format("csv")
@@ -27,7 +27,7 @@ namespace NBAPrediction.Services
                 .Load(path);
         }
 
-        public void CreateOrOverwriteManagedDeltaTable(DataFrame dataFrame, string tableName)
+        public void WriteToDeltaTable(DataFrame dataFrame, string tableName)
         {
             dataFrame.Write()
                 .Format("delta")
@@ -36,7 +36,7 @@ namespace NBAPrediction.Services
                 .SaveAsTable(tableName);
         }
 
-        public DataFrame LoadFromManagedDeltaTable(SparkSession spark, string tableName) 
+        public DataFrame ReadFromDeltaTable(SparkSession spark, string tableName) 
         {
             return spark.Read()
                 .Format("delta")

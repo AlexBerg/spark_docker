@@ -95,7 +95,7 @@ namespace NBAPrediction.Services
                 mlContext.Data.SaveAsText(predictions, stream, ',', schema: false);
             }
 
-            var df = _helperService.LoadFromCsv(spark, "/workspace/NBAPrediction/datasets/temp/prediction.csv")
+            var df = _helperService.ReadFromCsv(spark, "/workspace/NBAPrediction/datasets/temp/prediction.csv")
                 .Select("PlayerId", "Share", "Score")
                 .WithColumn("Rank", F.When(F.Col("Share") == 0.0, 0)
                     .Otherwise(F.RowNumber().Over(Spark.Sql.Expressions.Window.OrderBy(F.Desc("Share")))).Cast("float"))

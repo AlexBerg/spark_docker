@@ -1,6 +1,5 @@
-from helper_functions import get_spark_session, read_from_csv, save_to_delta_table
-from pyspark.sql import Window, SparkSession, DataFrame
-from helper_functions import read_from_csv
+from helper_functions import get_spark_session, read_from_csv, write_to_delta_table
+from pyspark.sql import SparkSession, DataFrame
 
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
@@ -53,7 +52,7 @@ def _create_team_tables(spark: SparkSession) -> DataFrame:
         .distinct()\
         .withColumn("TeamId", F.concat(F.hex(F.col("League")), F.hex(F.col("TeamNameShort"))))
     
-    save_to_delta_table(teams, "Teams")
+    write_to_delta_table(teams, "Teams")
 
     season_stats_cond = [team_summaries.abbreviation == teams.TeamNameShort, team_summaries.lg == teams.League]
     team_season_stats = team_summaries.join(teams, season_stats_cond)\
@@ -91,7 +90,7 @@ def _create_team_tables(spark: SparkSession) -> DataFrame:
 
     team_season_stats = _cast_column_to_float(team_season_stats)
 
-    save_to_delta_table(team_season_stats, "TeamSeasonStats")
+    write_to_delta_table(team_season_stats, "TeamSeasonStats")
 
     return return_df
 
@@ -114,7 +113,7 @@ def _create_players_table(spark: SparkSession):
             F.col("player").alias("PlayerName"),
             F.col("hof").alias("MadeHallOfFame").cast(T.BooleanType()))
 
-    save_to_delta_table(player_info, "Players")
+    write_to_delta_table(player_info, "Players")
 
 
 def _create_player_award_share_table(spark: SparkSession, teams: DataFrame):
@@ -132,7 +131,7 @@ def _create_player_award_share_table(spark: SparkSession, teams: DataFrame):
             F.col("share").alias("Share").cast(T.FloatType()),
             F.col("winner").alias("WonAward").cast(T.BooleanType()))
 
-    save_to_delta_table(player_award_share, "PlayerSeasonAwardShare")
+    write_to_delta_table(player_award_share, "PlayerSeasonAwardShare")
 
 
 def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: DataFrame):
@@ -167,7 +166,7 @@ def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: Data
 
     advanced_stats = _cast_column_to_float(advanced_stats)
 
-    save_to_delta_table(advanced_stats, "PlayerSeasonAdvancedStats")
+    write_to_delta_table(advanced_stats, "PlayerSeasonAdvancedStats")
 
 
 def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
@@ -208,7 +207,7 @@ def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
 
     player_per_game_stats = _cast_column_to_float(player_per_game_stats)
 
-    save_to_delta_table(player_per_game_stats, "PlayerSeasonStats")
+    write_to_delta_table(player_per_game_stats, "PlayerSeasonStats")
 
 
 
@@ -236,7 +235,7 @@ def _create_player_play_by_play_table(spark: SparkSession, teams: DataFrame):
 
     play_by_play = _cast_column_to_float(play_by_play)
 
-    save_to_delta_table(play_by_play, "PlayerSeasonPlayByPlayStats")
+    write_to_delta_table(play_by_play, "PlayerSeasonPlayByPlayStats")
 
 
 def _cast_column_to_float(df: DataFrame) -> DataFrame:

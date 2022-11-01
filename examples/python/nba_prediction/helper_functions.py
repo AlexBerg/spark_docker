@@ -14,10 +14,7 @@ def read_from_csv(spark: SparkSession, path: str) -> DataFrame:
             .option("sep", ",")\
             .load(path)
 
-def read_from_delta(spark: SparkSession, path: str) -> DataFrame:
-    return spark.read.format("delta").load(path)
-
-def save_to_delta_table(df: DataFrame, tableName: str):
+def write_to_delta_table(df: DataFrame, tableName: str):
     df.write.format("delta").mode("overwrite").saveAsTable(tableName)
 
 def read_from_delta_table(spark: SparkSession, tableName: str):
