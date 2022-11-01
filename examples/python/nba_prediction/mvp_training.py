@@ -1,4 +1,5 @@
 from helper_functions import get_spark_session
+from data_modeling import check_if_nba_tables_exist, create_nba_delta_tables, drop_all_nba_tables
 
 from pyspark.ml import Pipeline
 from pyspark.ml.stat import Correlation
@@ -43,6 +44,10 @@ def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame
 if __name__ == "__main__":
 
     spark = get_spark_session()
+
+    if check_if_nba_tables_exist(spark) == False:
+        drop_all_nba_tables(spark)
+        create_nba_delta_tables(spark) 
 
     dataset = _create_mvp_award_share_with_stats_dataset(spark)       
 

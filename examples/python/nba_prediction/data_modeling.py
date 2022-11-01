@@ -246,3 +246,11 @@ def _cast_column_to_float(df: DataFrame) -> DataFrame:
             df = df.withColumn(col, F.col(col).cast(T.FloatType()))
 
     return df
+
+
+if __name__ == "__main__":
+    spark = get_spark_session()
+
+    drop_all_nba_tables(spark)
+
+    create_nba_delta_tables(spark)
