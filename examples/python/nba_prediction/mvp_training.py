@@ -1,49 +1,63 @@
-from helper_functions import get_spark_session, read_from_delta
+from helper_functions import get_spark_session
 
 from pyspark.ml import Pipeline
 from pyspark.ml.stat import Correlation
 from pyspark.ml.regression import RandomForestRegressionModel, RandomForestRegressor
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.evaluation import RegressionEvaluator
-from pyspark.sql import Window
+from pyspark.sql import Window, SparkSession, DataFrame
 
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
+
+
+def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame:
+    mvp_award_share_with_stats = spark.sql(
+        """SELECT pt.* a.Share, a.Award, a.WonAward FROM (
+                SELECT p.*, t.GamesPlayed as TeamGamesPlayed, t.League, ROUND(t.Wins / t.GamesPlayed, 2) AS WinPercentage, t.AverageMarginOfVictory, t.NetRating FROM
+                (
+                    SELECT past.*, pst.PointsPerGame, pst.AssistsPerGame, pst.StealsPerGame, pst.TotalReboundsPerGame, pst.BlocksPerGame, pst.GamesPlayed, pst.MinutesPerGame, pbp.OnCourtPlusMinusPer100Poss, pbp.NetPlusMinusPer100Poss, pbp.PointsGeneratedByAssistsPerGame FROM
+                    PlayerSeasonStats AS pst
+                    LEFT JOIN PlayerSeasonAdvancedStats AS past ON pst.PlayerId = past.PlayerId AND pst.Season = past.Season AND pst.TeamId = past.TeamId
+                    LEFT JOIN PlayerSeasonPlayByPlay AS pbp ON pst.PlayerId = pbp.PlayerId AND pst.Season = pbp.Season AND pst.TeamId = pbp.TeamId
+                ) AS p
+                LEFT JOIN (
+                    SELECT tst.*, team.League FROM
+                    TeamSeasonStats AS tst
+                    LEFT JOIN Teams AS team ON tst.TeamId = team.TeamId
+                ) AS t
+                ON p.TeamId = t.TeamId AND p.Season = t.Season
+            ) as pt
+            LEFT JOIN PlayerSeasonAwardShare AS a ON pt.PlayerId = a.PlayerId AND pt.Season = a.Season AND pt.TeamId = a.TeamId"""
+        ).filter("""MinutesPerGame >= 20.0
+            AND GamesStarted / GamesPlayed >= 0.50
+            AND GamesPlayed / TeamGamesPlayed >= 0.50
+            AND League = 'NBA'""")\
+        .withColumn("Share", F.when(F.col("Award") == "nba mvp", F.col("Share")).otherwise(None))\
+        .na.fill(0.0, ["Share"])\
+        .na.fill(False, ["WonAward"])
+    
+    return mvp_award_share_with_stats   
+
 
 if __name__ == "__main__":
 
     spark = get_spark_session()
 
-    per_game_stats = get_player_per_game_stats(spark)
+    dataset = _create_mvp_award_share_with_stats_dataset(spark)       
 
-    per_game_stats = per_game_stats.na.drop()
+    feature_columns = ["ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares", "TotalReboundPercentage", "AssistPercentage", "StealPercentage",
+        "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssitsPerGame", "NetPlusMinutPer100Poss", "AssistsPerGame",
+        "StealsPerGame", "GamesStarted", "TotalReboundsPerGame", "BlocksPerGame", "WinPercentage"]
 
-    mvps = read_from_delta(spark, "delta/mvp_with_stats")\
-        .select(F.col("player_id").alias("player_id_mvp"), 
-            F.col("season").alias("season_mvp"), "share")
+    train = dataset.filter("Season != 2022")
+    test = dataset.filter("Season = 2022")
 
-    conditions = [
-        per_game_stats.player_id == mvps.player_id_mvp,
-        per_game_stats.season == mvps.season_mvp
-    ]
-
-    dataset = per_game_stats.join(mvps, conditions, "left")\
-        .drop("season_mvp", "player_id_mvp")\
-        .fillna({"share": 0.0})\
-        .filter("season != 2022")
-        
-
-    feature_columns = ["g", "gs", "pts_per_game", "per", "ast_percent", "stl_percent", "blk_percent", "ts_percent", "trb_per_game", "ast_per_game",
-        "stl_per_game", "blk_per_game", "tov_per_game", "dws", "ows", "bpm", "vorp"]
-
-    train = dataset.filter("season != 2021")
-    test = dataset.filter("season = 2021")
-
-    assembler = VectorAssembler(inputCols=feature_columns, outputCol="predictors")
+    assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
     train = assembler.transform(train)
     test = assembler.transform(test)
 
-    rf = RandomForestRegressor(featuresCol="predictors", predictionCol="predicted_share", labelCol="share", maxDepth=20, numTrees=60)
+    rf = RandomForestRegressor(featuresCol="features", predictionCol="predicted_share", labelCol="Share", maxDepth=20, numTrees=60)
 
     pipeline = Pipeline(stages=[rf])
 
@@ -51,10 +65,10 @@ if __name__ == "__main__":
 
     predictions = mvp_model.transform(test)
 
-    predictions = predictions.select("player_id", "player", "share", "predicted_share")\
+    predictions = predictions.select("PlayerId", "Share", "predicted_share")\
         .withColumn("predicted_rank", F.when((F.col("predicted_share") < 0.05) & (F.col("share") == 0.0), 0)\
             .otherwise(F.row_number().over(Window.orderBy(F.desc("predicted_share"))).cast(T.FloatType())))\
-        .withColumn("rank", F.when(F.col("share") == 0.0, 0).otherwise(F.row_number().over(Window.orderBy(F.desc("share")))).cast(T.FloatType()))\
+        .withColumn("rank", F.when(F.col("share") == 0.0, 0).otherwise(F.row_number().over(Window.orderBy(F.desc("Share")))).cast(T.FloatType()))\
         .withColumn("rank_diff", F.abs(F.col("rank") - F.col("predicted_rank")))
 
     evaluator = RegressionEvaluator(predictionCol="predicted_share", labelCol="share", metricName="rmse")
