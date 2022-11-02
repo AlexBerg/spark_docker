@@ -25,6 +25,9 @@ namespace NBAPrediction.Services
 
         public void TrainAndEvaluateMVPPredictionModel(SparkSession spark)
         {
+            /* The reason for the odd looping logic is that it is unfortunetly not possible to run collect on the dataframe
+            when running in docker as there are some ports we would need to map to when debugging to access the value. However, these ports are
+            not static, meaning we can not map to them in the docker compose */
             try
             {
                 var (mvpData, cols) = CreateMVPAwardShareWithStatsDataSet(spark);
@@ -75,7 +78,7 @@ namespace NBAPrediction.Services
                 .Concatenate("Features",
                     "ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares",
                     "TotalReboundPercentage", "AssistPercentage", "StealPercentage", "BlockPercentage", "TurnoverPercentage", "PointsPerGame", 
-                    "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssitsPerGame", "NetPlusMinutPer100Poss", "AssistsPerGame", 
+                    "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssistsPerGame", "NetPlusMinusPer100Poss", "AssistsPerGame", 
                     "StealsPerGame", "GamesStarted", "TotalReboundsPerGame", "BlocksPerGame", "WinPercentage")
                 .Append(mlContext.Regression.Trainers.FastForest(labelColumnName: "Share", featureColumnName: "Features"));
 
@@ -137,7 +140,7 @@ namespace NBAPrediction.Services
                             LEFT JOIN Teams AS team ON tst.TeamId = team.TeamId 
                         ) AS t
                         ON p.TeamId = t.TeamId AND p.Season = t.Season
-                        ) as pt
+                        ) AS pt
                         LEFT JOIN PlayerSeasonAwardShare AS a ON pt.PlayerId = a.PlayerId AND pt.Season = a.Season AND pt.TeamId = a.TeamId"
             ).Filter(@"MinutesPerGame >= 20.0 
                 AND GamesStarted / GamesPlayed >= 0.50 
