@@ -10,7 +10,7 @@ def check_if_nba_tables_exist(spark: SparkSession) -> bool:
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
     tables = spark.catalog.listTables()
-    if any(all(table.name != table_name for table in tables) for table_name in table_names):
+    if any(all(table.name.lower() != table_name.lower() for table in tables) for table_name in table_names):
         return False
     
     return True
@@ -19,11 +19,12 @@ def check_if_nba_tables_exist(spark: SparkSession) -> bool:
 def drop_all_nba_tables(spark: SparkSession):
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
-    try:
-        for table_name in table_names:
+
+    for table_name in table_names:
+        try:
             spark.sql(f"DROP TALBE {table_name}")
-    except Exception:
-        print("Exception when trying to drop table.")
+        except Exception:
+            print(f"Exception when trying to drop table {table_name}.")
 
 
 def create_nba_delta_tables(spark: SparkSession):
@@ -159,7 +160,7 @@ def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: Data
             F.col("ws").alias("WinShares"),
             F.col("ws_48").alias("WinSharesPer48"),
             F.col("obpm").alias("OffensiveBoxPlusMinus"),
-            F.col("dbmp").alias("DefensiveBoxPlusMinus"),
+            F.col("dbpm").alias("DefensiveBoxPlusMinus"),
             F.col("bpm").alias("BoxPlusMinues"),
             F.col("vorp").alias("ValueOverReplacementPlayer"))\
         .na.replace("NA", None)

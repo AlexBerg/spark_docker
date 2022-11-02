@@ -8,19 +8,21 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.sql import Window, SparkSession, DataFrame
 
+from statistics import fmean
+
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
 
 
 def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame:
     mvp_award_share_with_stats = spark.sql(
-        """SELECT pt.* a.Share, a.Award, a.WonAward FROM (
+        """SELECT pt.*, a.Share, a.Award, a.WonAward FROM (
                 SELECT p.*, t.GamesPlayed as TeamGamesPlayed, t.League, ROUND(t.Wins / t.GamesPlayed, 2) AS WinPercentage, t.AverageMarginOfVictory, t.NetRating FROM
                 (
-                    SELECT past.*, pst.PointsPerGame, pst.AssistsPerGame, pst.StealsPerGame, pst.TotalReboundsPerGame, pst.BlocksPerGame, pst.GamesPlayed, pst.MinutesPerGame, pbp.OnCourtPlusMinusPer100Poss, pbp.NetPlusMinusPer100Poss, pbp.PointsGeneratedByAssistsPerGame FROM
+                    SELECT past.*, pst.PointsPerGame, pst.AssistsPerGame, pst.StealsPerGame, pst.TotalReboundsPerGame, pst.BlocksPerGame, pst.GamesPlayed, pst.GamesStarted, pst.MinutesPerGame, pbp.OnCourtPlusMinusPer100Poss, pbp.NetPlusMinusPer100Poss, pbp.PointsGeneratedByAssistsPerGame FROM
                     PlayerSeasonStats AS pst
                     LEFT JOIN PlayerSeasonAdvancedStats AS past ON pst.PlayerId = past.PlayerId AND pst.Season = past.Season AND pst.TeamId = past.TeamId
-                    LEFT JOIN PlayerSeasonPlayByPlay AS pbp ON pst.PlayerId = pbp.PlayerId AND pst.Season = pbp.Season AND pst.TeamId = pbp.TeamId
+                    LEFT JOIN PlayerSeasonPlayByPlayStats AS pbp ON pst.PlayerId = pbp.PlayerId AND pst.Season = pbp.Season AND pst.TeamId = pbp.TeamId
                 ) AS p
                 LEFT JOIN (
                     SELECT tst.*, team.League FROM
@@ -40,7 +42,7 @@ def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame
     
     return mvp_award_share_with_stats
 
-def _train_and_evaluate_model(spark: SparkSession, dataset: DataFrame, assembler: VectorAssembler, season: int) -> tuple(float, bool):
+def _train_and_evaluate_model(dataset: DataFrame, assembler: VectorAssembler, season: int) -> tuple[float, bool]:
     train = dataset.filter(f"Season != {season}")
     test = dataset.filter(f"Season = {season}")
 
@@ -81,23 +83,27 @@ if __name__ == "__main__":
         drop_all_nba_tables(spark)
         create_nba_delta_tables(spark) 
 
-    dataset = _create_mvp_award_share_with_stats_dataset(spark)       
+    dataset = _create_mvp_award_share_with_stats_dataset(spark)
 
     feature_columns = ["ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares", "TotalReboundPercentage", "AssistPercentage", "StealPercentage",
-        "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssitsPerGame", "NetPlusMinutPer100Poss", "AssistsPerGame",
+        "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssistsPerGame", "NetPlusMinusPer100Poss", "AssistsPerGame",
         "StealsPerGame", "GamesStarted", "TotalReboundsPerGame", "BlocksPerGame", "WinPercentage"]
 
     assembler = VectorAssembler(inputCols=feature_columns, outputCol="features")
 
-    seasonToPredict = 1956 # First season nba mvp was awar    
-    latestSeason = 2022
+    seasons_with_data = [row["Season"] for row in dataset.select("Season").distinct().collect()]
+    seasons_with_data.sort()
 
     rmse_list = []
+    correctly_predicted_winner_list = []
 
-    while seasonToPredict <= latestSeason:
-        (rmse, correctly_predicted_winner) = _train_and_evaluate_model(spark, dataset, feature_columns, assembler, seasonToPredict)
+    for season in seasons_with_data:
+        (rmse, correctly_predicted_winner) = _train_and_evaluate_model(dataset, assembler, season)
         rmse_list.append(rmse)
+        correctly_predicted_winner_list.append(correctly_predicted_winner)
 
-        seasonToPredict += 1
+    average_rmse = fmean(rmse_list)
+    correct_winner_predicted_percentage = (correctly_predicted_winner_list.count(True) / len(correctly_predicted_winner_list)) * 100
 
-
+    print(f"Trained model correctly predicted winner {correct_winner_predicted_percentage}% of the seasons.")
+    print(f"Average rmse of all the models is {average_rmse}")
