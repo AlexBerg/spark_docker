@@ -58,14 +58,14 @@ def _train_and_evaluate_model(dataset: DataFrame, assembler: VectorAssembler, se
     predictions = mvp_model.transform(test)
 
     predictions = predictions.select("PlayerId", "Share", "predicted_share")\
-        .withColumn("predicted_rank", F.when((F.col("predicted_share") < 0.05) & (F.col("share") == 0.0), 0)\
+        .withColumn("predicted_rank", F.when((F.col("predicted_share") < 0.05) & (F.col("Share") == 0.0), 0)\
             .otherwise(F.row_number().over(Window.orderBy(F.desc("predicted_share"))).cast(T.FloatType())))\
         .withColumn("rank", F.when(F.col("share") == 0.0, 0).otherwise(F.row_number().over(Window.orderBy(F.desc("Share")))).cast(T.FloatType()))\
         .withColumn("rank_diff", F.abs(F.col("rank") - F.col("predicted_rank")))
 
-    evaluator = RegressionEvaluator(predictionCol="predicted_share", labelCol="share", metricName="rmse")
+    evaluator = RegressionEvaluator(predictionCol="predicted_share", labelCol="Share", metricName="rmse")
 
-    correctly_predicted_winner = predictions.where("Rank = 1 AND predicted_rank = 1").count() == 1
+    correctly_predicted_winner = predictions.where("rank = 1 AND predicted_rank = 1").count() == 1
 
     rmse = evaluator.evaluate(predictions)
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         drop_all_nba_tables(spark)
         create_nba_delta_tables(spark) 
 
-    dataset = _create_mvp_award_share_with_stats_dataset(spark)
+    dataset = _create_mvp_award_share_with_stats_dataset(spark).dropna()
 
     feature_columns = ["ValueOverReplacementPlayer", "PlayerEfficiencyRating", "WinShares", "TotalReboundPercentage", "AssistPercentage", "StealPercentage",
         "BlockPercentage", "TurnoverPercentage", "PointsPerGame", "OnCourtPlusMinusPer100Poss", "PointsGeneratedByAssistsPerGame", "NetPlusMinusPer100Poss", "AssistsPerGame",
