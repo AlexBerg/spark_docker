@@ -11,6 +11,8 @@ namespace NBAPrediction.Services
     {
         private readonly IHelperService _helperService;
         private readonly string _pathToRaw = "/workspace/examples/shared_datasets/";
+        private readonly HashSet<string> _tableNames = new HashSet<string>() {"Players", "Teams", "TeamSeasonStats", "PlayerSeasonAwardShare",
+            "PlayerSeasonAdvancedStats", "PlayerSeasonStats", "PlayerSeasonPlayByPlayStats"};
 
         public DataModelingService(IHelperService helperService)
         {
@@ -24,24 +26,34 @@ namespace NBAPrediction.Services
             CreatePlayerTables(spark, teams);
         }
 
+        public bool AllNBATablesExist(SparkSession spark)
+        {
+            var allExist = true;
+            foreach (string tableName in _tableNames)
+            {
+                if (!spark.Catalog.TableExists(tableName))
+                {
+                    allExist = false;
+                    break;
+                }
+            }
+
+            return allExist;
+        }
+
         public void DropAllNBATables(SparkSession spark)
         {
-            spark.Catalog.ListTables().Show();
-
-            var list = new List<string> {
-                "Players", "Teams", "TeamSeasonStats", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats", "PlayerSeasonStats", "PlayerSeasonPlayByPlayStats"
-            };
-
-            try
+            foreach (var tableName in _tableNames)
             {
-                list.ForEach(x => spark.Sql($"DROP TABLE {x}"));
+                try
+                {
+                    spark.Sql($"DROP TABLE {tableName}");
+                }
+                catch (System.Exception)
+                {
+                    System.Console.WriteLine($"Error when trying to drop table {tableName}");
+                }
             }
-            catch (System.Exception)
-            {
-                System.Console.WriteLine("Error when trying to drop table.");
-            }
-
-            spark.Catalog.ListTables().Show();
         }
 
         private DataFrame CreateTeamTables(SparkSession spark)
@@ -51,7 +63,7 @@ namespace NBAPrediction.Services
 
             DataFrame abbrev = _helperService.ReadFromCsv(spark, _pathToRaw + "Team Abbrev.csv").Select("team", "lg", "season", "abbreviation");
 
-            teamSummaries = teamSummaries.Join(abbrev, teamSummaries["team"] == abbrev["team"] 
+            teamSummaries = teamSummaries.Join(abbrev, teamSummaries["team"] == abbrev["team"]
                     & teamSummaries["season"] == abbrev["season"]
                     & teamSummaries["lg"] == abbrev["lg"])
                 .Drop(abbrev["season"])
@@ -191,11 +203,11 @@ namespace NBAPrediction.Services
             _helperService.WriteToDeltaTable(advancedStats, "PlayerSeasonAdvancedStats");
         }
 
-        private void CreatePlayerPlayByPlayTable(SparkSession spark, DataFrame teams) 
+        private void CreatePlayerPlayByPlayTable(SparkSession spark, DataFrame teams)
         {
             var playByPlay = _helperService.ReadFromCsv(spark, _pathToRaw + "Player Play By Play.csv").Filter("tm != 'TOT'");
 
-            playByPlay = playByPlay.Join(teams, playByPlay["tm"] == teams["TeamNameShort"] & 
+            playByPlay = playByPlay.Join(teams, playByPlay["tm"] == teams["TeamNameShort"] &
                     playByPlay["season"] == teams["Season"])
                 .Select(F.Col("player_id").As("PlayerId"),
                     playByPlay["season"].As("Season"),

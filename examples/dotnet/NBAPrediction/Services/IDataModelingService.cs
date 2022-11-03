@@ -7,6 +7,8 @@ namespace NBAPrediction.Services
         public void CreateNBADeltaTables(SparkSession spark);
 
         public void DropAllNBATables(SparkSession spark);
+
+        public bool AllNBATablesExist(SparkSession spark);
     }
 
 }

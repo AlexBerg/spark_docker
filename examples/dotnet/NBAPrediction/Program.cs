@@ -12,6 +12,13 @@ namespace NBAPrediction
             var spark = helper.GetSparkSession();
 
             var training = new TrainingService(helper);
+            var dataModeling = new DataModelingService(helper);
+
+            if (!dataModeling.AllNBATablesExist(spark))
+            {
+                dataModeling.DropAllNBATables(spark);
+                dataModeling.CreateNBADeltaTables(spark);
+            }
 
             training.TrainAndEvaluateMVPPredictionModel(spark);
         }
