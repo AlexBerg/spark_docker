@@ -1,2 +1,6 @@
 **/.vscode/
 **/container_data
+**/__pycache__
+**/bin/
+**/obj/
+nuget.config
