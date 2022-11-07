@@ -60,7 +60,7 @@ def _train_and_evaluate_model(dataset: DataFrame, assembler: VectorAssembler, se
     predictions = predictions.select("PlayerId", "Share", "predicted_share")\
         .withColumn("predicted_rank", F.when((F.col("predicted_share") < 0.05) & (F.col("Share") == 0.0), 0)\
             .otherwise(F.row_number().over(Window.orderBy(F.desc("predicted_share"))).cast(T.FloatType())))\
-        .withColumn("rank", F.when(F.col("share") == 0.0, 0).otherwise(F.row_number().over(Window.orderBy(F.desc("Share")))).cast(T.FloatType()))\
+        .withColumn("rank", F.when(F.col("Share") == 0.0, 0).otherwise(F.row_number().over(Window.orderBy(F.desc("Share")))).cast(T.FloatType()))\
         .withColumn("rank_diff", F.abs(F.col("rank") - F.col("predicted_rank")))
 
     evaluator = RegressionEvaluator(predictionCol="predicted_share", labelCol="Share", metricName="rmse")
