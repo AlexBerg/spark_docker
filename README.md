@@ -1,3 +1,5 @@
+**_IMPORTANT:_** There are <b>dummy passwords</b> in the shared/templates/hive-site.xml, shared/templates/sql-scripts/init_metastore.sql, shared/templats/sql-scripts/entrypoint.sh and docker-compose.spark-dotnet.yml files that you <b>should absolutely change before running this</b>.
+
 # Spark docker setup
 ## Introduction
 The purpose for this project is to provide a easy to use dockerized spark environment setup that resembels something you would find out in the "real" world to use for local development.
