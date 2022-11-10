@@ -2,6 +2,7 @@ FROM java-base:8
 
 ARG SPARK_VERSION=3.2.1
 ARG HADOOP_VERSION=2.7
+ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 ENV DEAMON_RUN=true \
     HADOOP_VERSION=${HADOOP_VERSION} \
     SPARK_HOME=/spark \
@@ -35,6 +36,8 @@ RUN mkdir /workspace \
     && mkdir /shared_data
 
 COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
+
+RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
 
 EXPOSE 8080 8081 7077 6066 5567 4040
 
