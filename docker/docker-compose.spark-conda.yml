@@ -10,10 +10,10 @@ services:
       dockerfile: Dockerfile.sql-server
       args:
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
+        - SA_PW=MostSecretPW!
     image: mssql:2019
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=EvenMostSecretPW!
     ports:
       - 1433:1433
     networks:
