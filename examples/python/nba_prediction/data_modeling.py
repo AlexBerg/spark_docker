@@ -22,7 +22,7 @@ def drop_all_nba_tables(spark: SparkSession):
 
     for table_name in table_names:
         try:
-            spark.sql(f"DROP TALBE {table_name}")
+            spark.sql(f"DROP TABLE {table_name}")
         except Exception:
             print(f"Exception when trying to drop table {table_name}.")
 
