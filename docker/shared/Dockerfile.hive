@@ -1,6 +1,9 @@
 FROM java-base:8
 
-RUN apt-get install -y openssh-server \
+ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
+
+RUN apt-get update \
+    && apt-get install -y openssh-server \
     && mkdir /var/run/sshd
 
 RUN echo 'root:mysecret' |chpasswd \
@@ -30,6 +33,8 @@ RUN wget https://archive.apache.org/dist/hive/hive-2.3.9/apache-hive-2.3.9-bin.t
 
 COPY templates/hive-site.xml /opt/hive/conf/hive-site.xml
 COPY templates/hive-scripts/init-hive.sh /scripts/init-hive.sh
+
+RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /opt/hive/conf/hive-site.xml
 
 RUN chmod +x /scripts/init-hive.sh
 

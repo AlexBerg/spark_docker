@@ -3,33 +3,41 @@ name: "spark_conda"
 
 services:
   mssql:
+    hostname: mssql
     container_name: spark-mssql
     build:
-      context: ../shared
+      context: ./shared
       dockerfile: Dockerfile.sql-server
+      args:
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
+        - SA_PW=MostSecretPW!
     image: mssql:2019
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=MostSecretPW!
     ports:
       - 1433:1433
+    networks:
+      - sparknet
     volumes:
       - "./container_data/mssql/log:/var/opt/mssql/log"
       - "./container_data/mssql/data:/var/opt/mssql/data"
       - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
   
   hive-metastore:
+    hostname: hive-metastore
     container_name: spark-hive-metastore
     build:
       context: ./shared
       dockerfile: Dockerfile.hive
+      args:
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     entrypoint: /scripts/init-hive.sh
     image: hive:2.3.9
     ports:
       - 10000:10000
       - 9083:9083
-    links:
-      - "mssql:mssql"
+    networks:
+      - sparknet
     volumes:
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
     depends_on:
@@ -43,14 +51,17 @@ services:
       args:
         - SPARK_VERSION=3.2.1
         - HADOOP_VERSION=2.7
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     image: spark-conda:3.2.1
     ports: 
-      - 5567:5567
       - 4040:4040
+    networks:
+      - sparknet
     volumes:
       - "../:/workspace"
       - "./container_data/table_data:/shared_data/table_data"
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
-    links:
-      - "mssql:mssql"
-      - "hive-metastore:hive-metastore"
+
+networks:
+  sparknet:
+    driver: bridge
