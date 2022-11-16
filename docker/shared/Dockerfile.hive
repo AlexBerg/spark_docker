@@ -12,7 +12,7 @@ RUN echo 'root:mysecret' |chpasswd \
 
 EXPOSE 22
 
-CMD    ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D"]
 
 RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz \
     && tar xf hadoop-2.7.4.tar.gz \
