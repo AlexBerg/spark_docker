@@ -2,6 +2,10 @@ FROM minio/minio:latest
 
 ARG MINIO_ROOT_USER=minio_user
 ARG MINIO_ROOT_PASSWORD=minio_password
+ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
+
+ENV MINIO_ROOT_USER=${MINIO_ROOT_USER}
+ENV MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
 
 RUN mkdir /opt/minio-client \
  && chmod 777 /opt/minio-client \
@@ -12,9 +16,10 @@ ENV PATH="${PATH}:/opt/minio-client/"
 
 COPY templates/minio-scripts/* /scripts/
 
-RUN chmod +x /scripts/init-minio.sh \
-    && chmod +x /scripts/setup-for-hive.sh
+RUN chmod +x /scripts/init-minio.sh
 
-RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /scripts/setup-for-hive.sh
+RUN sed -i "s|<HIVEUSERPASSWORD>|${HIVE_USER_PASSWORD}|g" /scripts/init-minio.sh \
+ && sed -i "s|<ROOTADMIN>|${MINIO_ROOT_USER}|g" /scripts/init-minio.sh \
+ && sed -i "s|<ROOTPASSWORD>|${MINIO_ROOT_PASSWORD}|g" /scripts/init-minio.sh
 
-ENTRYPOINT ["/bin/bash", "/scripts/init-minio.sh"]
+RUN ["/bin/bash", "/scripts/init-minio.sh"]

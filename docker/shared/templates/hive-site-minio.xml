@@ -20,7 +20,7 @@
    </property>
    <property>
       <name>javax.jdo.option.ConnectionPassword</name>
-      <value>Supersecretpassw0rd!</value>
+      <value>HIVEUSERSQLPASSWORD</value>
       <description>password to use against metastore database</description>
    </property>
    <property>
@@ -44,12 +44,12 @@
    <property>
       <name>fs.s3a.access.key</name>
       <description>AWS access key ID.</description>
-      <value>minio_user</value>
+      <value>minio_hive_user</value>
    </property>
    <property>
       <name>fs.s3a.secret.key</name>
       <description>AWS secret key.</description>
-      <value>minio_password</value>
+      <value>HIVEUSERMINIOPASSWORD</value>
    </property>
    <property>
       <name>fs.s3a.path.style.access</name>
