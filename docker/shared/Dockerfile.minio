@@ -1,0 +1,20 @@
+FROM minio/minio:latest
+
+ARG MINIO_ROOT_USER=minio_user
+ARG MINIO_ROOT_PASSWORD=minio_password
+
+RUN mkdir /opt/minio-client \
+ && chmod 777 /opt/minio-client \
+ && curl -s -q https://dl.min.io/client/mc/release/linux-amd64/mc -o /opt/minio-client/mc  \
+ && chmod +x /opt/minio-client/mc
+
+ENV PATH="${PATH}:/opt/minio-client/"
+
+COPY templates/minio-scripts/* /scripts/
+
+RUN chmod +x /scripts/init-minio.sh \
+    && chmod +x /scripts/setup-for-hive.sh
+
+RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /scripts/setup-for-hive.sh
+
+ENTRYPOINT ["/bin/bash", "/scripts/init-minio.sh"]

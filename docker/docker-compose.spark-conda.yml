@@ -26,7 +26,12 @@ services:
   minio-lake:
     hostname: minio-lake
     container_name: spark-minio-lake
-    image: 'minio/minio:latest'
+    build:
+      context: ./shared
+      dockerfile: Dockerfile.minio
+      args:
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
+    image: minio:latest
     environment:
       - MINIO_ROOT_USER=minio_user
       - MINIO_ROOT_PASSWORD=minio_password
