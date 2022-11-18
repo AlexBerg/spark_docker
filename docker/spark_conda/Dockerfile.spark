@@ -29,8 +29,8 @@ RUN mkdir /workspace \
     && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
-    #&& wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
+    #&& wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
+    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/1.2.1/delta-core_2.12-1.2.1.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-storage/1.2.1/delta-storage-1.2.1.jar \
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}.4/hadoop-aws-${HADOOP_VERSION}.4.jar \
@@ -41,7 +41,7 @@ RUN mkdir /workspace \
     && mv *.jar spark/jars \
     && mkdir /shared_data
 
-COPY shared/templates/hive-site-minio.xml /spark/conf/hive-site.xml
+COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
 
 EXPOSE 8080 8081 7077 6066 5567 4040
 
