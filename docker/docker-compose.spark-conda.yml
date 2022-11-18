@@ -70,8 +70,6 @@ services:
       context: .
       dockerfile: ./spark_conda/Dockerfile.conda
       args:
-        - SPARK_VERSION=3.2.1
-        - HADOOP_VERSION=2.7
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     image: spark-conda:3.2.1
     ports: 

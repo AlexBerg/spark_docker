@@ -2,6 +2,8 @@ FROM java-base:8
 
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 
+ARG HADOOP_VERSION=2.10.2
+
 RUN apt-get update \
     && apt-get install -y openssh-server \
     && mkdir /var/run/sshd
@@ -14,11 +16,11 @@ EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D"]
 
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz \
-    && tar xf hadoop-2.7.4.tar.gz \
-    && mv hadoop-2.7.4 /opt \
-    && ln -s /opt/hadoop-2.7.4 /opt/hadoop \
-    && rm hadoop-2.7.4.tar.gz 
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && tar xf hadoop-${HADOOP_VERSION}.tar.gz \
+    && mv hadoop-${HADOOP_VERSION} /opt \
+    && ln -s /opt/hadoop-${HADOOP_VERSION} /opt/hadoop \
+    && rm hadoop-${HADOOP_VERSION}.tar.gz 
 ENV HADOOP_HOME /opt/hadoop
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV HIVE_HOME /opt/hive
@@ -29,11 +31,11 @@ RUN wget https://archive.apache.org/dist/hive/hive-2.3.9/apache-hive-2.3.9-bin.t
     && rm apache-hive-2.3.9-bin.tar.gz \
     && mkdir -p /shared_data \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
-    && mv *.jar opt/hive/lib \
-    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.4/hadoop-aws-2.7.4.jar \
-    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.12.344/aws-java-sdk-1.12.344.jar \
-    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar \
-    && mv *.jar ${HADOOP_HOME}/share/hadoop/common/lib
+    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
+    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.271/aws-java-sdk-bundle-1.11.271.jar \
+    #&& wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar \
+    && wget https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar \
+    && mv *.jar opt/hive/lib
 
 COPY templates/hive-site-minio.xml /opt/hive/conf/hive-site.xml
 COPY templates/hive-scripts/init-hive.sh /scripts/init-hive.sh
