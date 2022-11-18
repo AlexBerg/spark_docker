@@ -10,7 +10,6 @@ set -o pipefail # dont hide errors within pipes
 readonly apache_spark_version=3.2.1
 readonly apache_spark_short_version="${apache_spark_version:0:3}"
 readonly hadoop_short_version=2.7
-readonly scala_version=2.11
 readonly dotnet_core_version=3.1
 readonly dotnet_spark_version=2.1.1
 proxy=""

@@ -2,7 +2,8 @@ FROM java-base:8
 
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 
-ARG HADOOP_VERSION=2.10.2
+ARG HADOOP_VERSION=2.7.4
+ARG HIVE_VERSION=2.3.9
 
 RUN apt-get update \
     && apt-get install -y openssh-server \
@@ -25,16 +26,18 @@ ENV HADOOP_HOME /opt/hadoop
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV HIVE_HOME /opt/hive
 
-RUN wget https://archive.apache.org/dist/hive/hive-2.3.9/apache-hive-2.3.9-bin.tar.gz \
-    && tar -xzvf apache-hive-2.3.9-bin.tar.gz \
-    && mv apache-hive-2.3.9-bin /opt/hive \
-    && rm apache-hive-2.3.9-bin.tar.gz \
+RUN wget https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
+    && tar -xzvf apache-hive-${HIVE_VERSION}-bin.tar.gz \
+    && mv apache-hive-${HIVE_VERSION}-bin /opt/hive \
+    && rm apache-hive-${HIVE_VERSION}-bin.tar.gz \
     && mkdir -p /shared_data \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
+    # && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
-    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.271/aws-java-sdk-bundle-1.11.271.jar \
-    #&& wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar \
-    && wget https://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar \
+    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar \
+    #&& wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.3.3/jackson-annotations-2.3.3.jar \
+    #&& wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.3.3/jackson-databind-2.3.3.jar \
+    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/2.7.4/hadoop-common-2.7.4.jar \
     && mv *.jar opt/hive/lib
 
 COPY templates/hive-site-minio.xml /opt/hive/conf/hive-site.xml
