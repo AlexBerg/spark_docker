@@ -1,7 +1,8 @@
 FROM java-base:8
 
-ARG SPARK_VERSION=3.2.1
-ARG HADOOP_VERSION=2.7
+ARG SPARK_VERSION=3.3.1
+ARG HADOOP_VERSION=3.3.2
+ARG HADOOP_VERSION_SHORT=3
 ENV DEAMON_RUN=true \
     HADOOP_VERSION=${HADOOP_VERSION} \
     SPARK_HOME=/spark \
@@ -22,13 +23,13 @@ COPY shared/templates/spark-scripts/* /usr/local/bin/
 RUN mkdir /workspace \
     && chmod 777 /workspace \
     && echo "Downloading spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ..." \
-    && wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
-    && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
-    && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark \
-    && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+    && wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
+    && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
+    && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT} spark \
+    && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
+    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/1.2.1/delta-core_2.12-1.2.1.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-storage/1.2.1/delta-storage-1.2.1.jar \
     && mv *.jar spark/jars \
