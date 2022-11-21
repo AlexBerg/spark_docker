@@ -40,7 +40,7 @@ RUN wget https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-$
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/2.7.4/hadoop-common-2.7.4.jar \
     && mv *.jar opt/hive/lib
 
-COPY templates/hive-site.xml /opt/hive/conf/hive-site.xml
+COPY templates/hive-site-minio.xml /opt/hive/conf/hive-site.xml
 COPY templates/hive-scripts/init-hive.sh /scripts/init-hive.sh
 
 RUN sed -i "s|HIVEUSERSQLPASSWORD|${HIVE_USER_PASSWORD}|g" /opt/hive/conf/hive-site.xml \

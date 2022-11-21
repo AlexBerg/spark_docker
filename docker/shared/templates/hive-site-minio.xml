@@ -36,10 +36,20 @@
       Type of database used by the metastore. Information schema &amp; JDBCStorageHandler depend on it.
       </description>
    </property>
-   <property>
+   <!-- <property>
       <name>fs.s3a.endpoint</name>
       <description>AWS S3 endpoint to connect to.</description>
       <value>http://minio-lake:9000</value>
+   </property> -->
+   <property>
+      <name>fs.s3a.proxy.host</name>
+      <description>AWS S3 endpoint to connect to.</description>
+      <value>minio-lake</value>
+   </property>
+   <property>
+      <name>fs.s3a.proxy.port</name>
+      <description>AWS S3 endpoint to connect to.</description>
+      <value>9000</value>
    </property>
    <property>
       <name>fs.s3a.access.key</name>
