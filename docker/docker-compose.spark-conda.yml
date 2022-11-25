@@ -32,7 +32,7 @@ services:
       args:
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     entrypoint: /scripts/init-hive.sh
-    image: hive:2.3.9
+    image: hive:3.1.2
     ports:
       - 10000:10000
       - 9083:9083

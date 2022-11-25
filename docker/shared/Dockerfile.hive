@@ -25,10 +25,10 @@ ENV HADOOP_HOME /opt/hadoop
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV HIVE_HOME /opt/hive
 
-RUN wget https://archive.apache.org/dist/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz \
-    && tar -xzvf apache-hive-${HIVE_VERSION}-bin.tar.gz \
-    && mv apache-hive-${HIVE_VERSION}-bin /opt/hive \
-    && rm apache-hive-${HIVE_VERSION}-bin.tar.gz \
+RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/${HIVE_VERSION}/hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
+    && tar -xzvf hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
+    && mv apache-hive-metastore-${HIVE_VERSION}-bin /opt/hive \
+    && rm hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
     && mkdir -p /shared_data \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
     && cp mssql-jdbc-9.4.0.jre8.jar opt/hive/lib

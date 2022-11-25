@@ -42,13 +42,18 @@
       </description>
    </property>
    <property>
-      <name>spark.sql.hive.metastore.version</name>
+      <name>hive.metastore.version</name>
       <value>3.1.2</value>
       <description>Hive version to use.</description>
    </property>
    <property>
-      <name>spark.sql.hive.metastore.jars</name>
+      <name>hive.metastore.jars</name>
       <value>maven</value>
       <description>Specify that we download jars from maven for now.</description>
+   </property>
+   <property>
+      <name>hive.metastore.sharedPrefixes</name>
+      <value>com.microsoft.sqlserver</value>
+      <description>JBCD driver to be used to talk to metastore</description>
    </property>
 </configuration>

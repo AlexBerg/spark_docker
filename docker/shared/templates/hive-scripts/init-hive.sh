@@ -8,10 +8,6 @@ $HIVE_HOME/bin/schematool -dbType mssql -initSchema
 
 sleep 10
 
-$HIVE_HOME/bin/hive --service metastore &
-
-sleep 10
-
-$HIVE_HOME/bin/hiveserver2 --hiveconf hive.root.logger=Info,console &
+$HIVE_HOME/bin/start-metastore &
 
 /usr/bin/tail -f /dev/null
