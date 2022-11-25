@@ -10,7 +10,6 @@ ENV DEAMON_RUN=true \
     SPARK_DRIVER_PORT=7077 \
     SPARK_DRIVER_WEBUI_PORT=8080 \
     SPARK_DRIVER_URL="" \
-    SPARK_SUBMIT_PACKAGES="io.delta:delta-core_2.12:1.2.1" \
     SPARK_VERSION=${SPARK_VERSION} \
     SPARK_WORKER_INSTANCES=1 \
     SPARK_WORKER_PORT=7078 \
@@ -30,8 +29,8 @@ RUN mkdir /workspace \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
-    && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/1.2.1/delta-core_2.12-1.2.1.jar \
-    && wget https://repo1.maven.org/maven2/io/delta/delta-storage/1.2.1/delta-storage-1.2.1.jar \
+    && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.1/delta-core_2.12-2.1.1.jar \
+    && wget https://repo1.maven.org/maven2/io/delta/delta-storage/2.1.1/delta-storage-2.1.1.jar \
     && mv *.jar spark/jars \
     && mkdir /shared_data
 
