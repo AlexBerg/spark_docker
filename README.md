@@ -13,7 +13,7 @@ in .NET. Both setups include support for Delta Lake.
 The reason for the different setups using different spark version is simply that the highest version of Spark currently supported by Spark DotNet is 3.2.1
 
 #### Shared
-* Hive metastore 3.1.2
+* Hive metastore 3.1.2 (Hadoop 3.3.1)
 * SQL Server 2019(latest)
 #### Python (Conda)
 * Spark 3.3.1 (Hadoop 3.3.1)
