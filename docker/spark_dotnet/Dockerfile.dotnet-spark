@@ -44,7 +44,7 @@ RUN mkdir /workspace \
 
 COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
 
-RUN sed -i "|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
+RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
 
 EXPOSE 8080 8081 7077 6066 5567 4040
 

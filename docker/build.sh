@@ -8,8 +8,7 @@ set -o nounset # abort on unbound variable
 set -o pipefail # dont hide errors within pipes
 
 readonly conda_apache_spark_version=3.3.1
-readonly dotnet_apache_spark_version=3.3.1
-readonly apache_spark_short_version="${apache_spark_version:0:3}"
+readonly dotnet_apache_spark_version=3.2.1
 readonly conda_hadoop_short_version=3.3
 readonly dotnet_hadoop_short_version=3.2
 readonly scala_version=2.12
@@ -60,8 +59,14 @@ main() {
 build_image() {
     local image_name="${1}"
     local docker_file_name="${2}"
-    local apache_spark_version="${3}"
-    local hadoop_short_version="${4}"
+    local apache_spark_version=""
+    local hadoop_short_version=""
+
+    if [ $# -ge 3 ]
+    then
+        apache_spark_version="${3}"
+        hadoop_short_version="${4}"
+    fi
 
     local build_args="--build-arg SPARK_VERSION=${apache_spark_version}
         --build-arg HADOOP_VERSION=${hadoop_short_version}"
