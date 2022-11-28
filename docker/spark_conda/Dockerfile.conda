@@ -1,4 +1,4 @@
-FROM spark:3.2.1
+FROM spark:3.3.1
 
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 
