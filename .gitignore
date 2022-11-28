@@ -3,4 +3,5 @@
 **/__pycache__
 **/bin/
 **/obj/
+**/*.assets.cache
 nuget.config
