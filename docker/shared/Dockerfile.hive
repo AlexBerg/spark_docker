@@ -1,6 +1,8 @@
 FROM java-base:8
 
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
+ARG HADOOP_VERSION=3.3.2
+ARG HIVE_VERSION=3.1.2
 
 RUN apt-get update \
     && apt-get install -y openssh-server \
@@ -14,22 +16,22 @@ EXPOSE 22
 
 CMD    ["/usr/sbin/sshd", "-D"]
 
-RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-2.7.4/hadoop-2.7.4.tar.gz \
-    && tar xf hadoop-2.7.4.tar.gz \
-    && mv hadoop-2.7.4 /opt \
-    && ln -s /opt/hadoop-2.7.4 /opt/hadoop \
-    && rm hadoop-2.7.4.tar.gz 
+RUN wget https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && tar xf hadoop-${HADOOP_VERSION}.tar.gz \
+    && mv hadoop-${HADOOP_VERSION} /opt \
+    && ln -s /opt/hadoop-${HADOOP_VERSION} /opt/hadoop \
+    && rm hadoop-${HADOOP_VERSION}.tar.gz 
 ENV HADOOP_HOME /opt/hadoop
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV HIVE_HOME /opt/hive
 
-RUN wget https://archive.apache.org/dist/hive/hive-2.3.9/apache-hive-2.3.9-bin.tar.gz \
-    && tar -xzvf apache-hive-2.3.9-bin.tar.gz \
-    && mv apache-hive-2.3.9-bin /opt/hive \
-    && rm apache-hive-2.3.9-bin.tar.gz \
+RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/${HIVE_VERSION}/hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
+    && tar -xzvf hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
+    && mv apache-hive-metastore-${HIVE_VERSION}-bin /opt/hive \
+    && rm hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
     && mkdir -p /shared_data \
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
-    && cp mssql-jdbc-7.2.2.jre8.jar opt/hive/lib
+    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
+    && cp mssql-jdbc-9.4.0.jre8.jar opt/hive/lib
 
 COPY templates/hive-site.xml /opt/hive/conf/hive-site.xml
 COPY templates/hive-scripts/init-hive.sh /scripts/init-hive.sh

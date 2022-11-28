@@ -10,13 +10,20 @@ There are currently two different configurations available: spark with conda to 
 in .NET. Both setups include support for Delta Lake.
 
 ### Versions used
-* Spark 3.2.1
-* Hive 2.3.9
+The reason for the different setups using different spark version is simply that the highest version of Spark currently supported by Spark DotNet is 3.2.1
+
+#### Shared
+* Hive metastore 3.1.2 (Hadoop 3.3.1)
 * SQL Server 2019(latest)
+#### Python (Conda)
+* Spark 3.3.1 (Hadoop 3.3.1)
+* Delta lake 2.1.1
+* Conda latest linux version
+#### Dotnet
+* Spark 3.2.1 
 * .NET Core 3.1
 * .NET Spark 2.1.1
-* Conda latest linux version
-* Delta lake 1.2.1
+* Delta lake 2.0.1
 
 ## Spark with conda container
 This container comes with latest linux version of conda pre-installed and initalized in the bash shell.
