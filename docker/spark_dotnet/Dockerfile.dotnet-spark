@@ -2,10 +2,10 @@ ARG DOTNET_SPARK_VERSION=2.1.1
 FROM dotnet-spark-base-runtime:${DOTNET_SPARK_VERSION}
 
 ARG SPARK_VERSION=3.2.1
-ARG HADOOP_VERSION=3.2
+ARG HADOOP_VERSION_SHORT=3.2
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 ENV DEAMON_RUN=true \
-    HADOOP_VERSION=${HADOOP_VERSION} \
+    HADOOP_VERSION=${HADOOP_VERSION_SHORT} \
     SPARK_DEBUG_DISABLED="" \
     SPARK_HOME=/spark \
     SPARK_DRIVER_DISABLED="" \
@@ -30,11 +30,11 @@ RUN mkdir /workspace \
     && dotnet build \
     && cp /dotnet/HelloSpark/bin/Debug/netcoreapp${DOTNET_CORE_VERSION}/microsoft-spark-*.jar /dotnet/Debug/netcoreapp${DOTNET_CORE_VERSION}/ \
     && cd / \
-    && echo "Downloading spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ..." \
-    && wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
-    && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
-    && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark \
-    && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz \
+    && echo "Downloading spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz ..." \
+    && wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
+    && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
+    && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT} spark \
+    && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && chmod 755 /usr/local/bin/start-spark-debug.sh \

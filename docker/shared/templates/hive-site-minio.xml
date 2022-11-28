@@ -36,20 +36,20 @@
       Type of database used by the metastore. Information schema &amp; JDBCStorageHandler depend on it.
       </description>
    </property>
-   <!-- <property>
+   <property>
+      <name>hive.metastore.version</name>
+      <value>3.1.2</value>
+      <description>Hive version to use.</description>
+   </property>
+   <property>
+      <name>hive.metastore.jars</name>
+      <value>maven</value>
+      <description>Specify that we download jars from maven for now.</description>
+   </property>
+   <property>
       <name>fs.s3a.endpoint</name>
       <description>AWS S3 endpoint to connect to.</description>
       <value>http://minio-lake:9000</value>
-   </property> -->
-   <property>
-      <name>fs.s3a.proxy.host</name>
-      <description>AWS S3 endpoint to connect to.</description>
-      <value>minio-lake</value>
-   </property>
-   <property>
-      <name>fs.s3a.proxy.port</name>
-      <description>AWS S3 endpoint to connect to.</description>
-      <value>9000</value>
    </property>
    <property>
       <name>fs.s3a.access.key</name>
@@ -60,6 +60,10 @@
       <name>fs.s3a.secret.key</name>
       <description>AWS secret key.</description>
       <value>HIVEUSERMINIOPASSWORD</value>
+   </property>
+   <property>
+    <name>fs.s3a.connection.ssl.enabled</name>
+    <value>false</value>
    </property>
    <property>
       <name>fs.s3a.path.style.access</name>

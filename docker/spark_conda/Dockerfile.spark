@@ -21,7 +21,7 @@ COPY shared/templates/spark-scripts/* /usr/local/bin/
 
 RUN mkdir /workspace \
     && chmod 777 /workspace \
-    && echo "Downloading spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz ..." \
+    && echo "Downloading spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz ..." \
     && wget -q https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
     && tar -xvzf spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
     && mv spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT} spark \
@@ -31,11 +31,8 @@ RUN mkdir /workspace \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.1/delta-core_2.12-2.1.1.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-storage/2.1.1/delta-storage-2.1.1.jar \
-    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}.4/hadoop-aws-${HADOOP_VERSION}.4.jar \
-    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar \
-    #&& wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.3.3/jackson-annotations-2.3.3.jar \
-    #&& wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.3.3/jackson-databind-2.3.3.jar \
-    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-common/2.7.4/hadoop-common-2.7.4.jar \
+    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
+    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1026/aws-java-sdk-bundle-1.11.1026.jar \
     && mv *.jar spark/jars \
     && mkdir /shared_data
 
