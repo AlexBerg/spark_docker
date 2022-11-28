@@ -7,9 +7,11 @@ set -o errexit # abort on nonzero exit status
 set -o nounset # abort on unbound variable
 set -o pipefail # dont hide errors within pipes
 
-readonly apache_spark_version=3.3.1
+readonly conda_apache_spark_version=3.3.1
+readonly dotnet_apache_spark_version=3.3.1
 readonly apache_spark_short_version="${apache_spark_version:0:3}"
-readonly hadoop_short_version=3.3
+readonly conda_hadoop_short_version=3.3
+readonly dotnet_hadoop_short_version=3.2
 readonly scala_version=2.12
 readonly dotnet_core_version=3.1
 readonly dotnet_spark_version=2.1.1
@@ -31,12 +33,12 @@ main() {
 
     if [ $build_conda == true ]
     then
-        echo "Building Apache Spark ${apache_spark_version} image"
+        echo "Building Apache Spark ${conda_apache_spark_version} image"
 
         build_spark_with_conda_runtime
     elif [ $build_dotnet == true ]
     then
-        echo "Building .NET for Apache Spark ${dotnet_spark_version} runtime image with Apache Spark ${apache_spark_version}"
+        echo "Building .NET for Apache Spark ${dotnet_spark_version} runtime image with Apache Spark ${dotnet_apache_spark_version}"
 
         build_dotnet_sdk
         build_dotnet_spark_base_runtime
@@ -58,6 +60,9 @@ main() {
 build_image() {
     local image_name="${1}"
     local docker_file_name="${2}"
+    local apache_spark_version="${3}"
+    local hadoop_short_version="${4}"
+
     local build_args="--build-arg SPARK_VERSION=${apache_spark_version}
         --build-arg HADOOP_VERSION=${hadoop_short_version}"
     local cmd="docker build ${build_args} -f ${docker_file_name} -t ${image_name} ."
@@ -91,15 +96,15 @@ build_java_base() {
 #   A spark and conda docker image tagged with the Apache Spark version.
 #######################################
 build_spark_with_conda_runtime() {
-    local spark_image_name="spark:${apache_spark_version}"
+    local spark_image_name="spark:${conda_apache_spark_version}"
     local spark_docker_file_name="Dockerfile.spark"
-    local conda_image_name="spark-conda:${apache_spark_version}"
+    local conda_image_name="spark-conda:${conda_apache_spark_version}"
     local conda_docker_file_name="Dockerfile.conda"
     local folder_name="spark_conda"
 
-    build_image "${spark_image_name}" "${folder_name}/${spark_docker_file_name}"
+    build_image "${spark_image_name}" "${folder_name}/${spark_docker_file_name}" "${conda_apache_spark_version}" "${conda_hadoop_short_version}"
 
-    build_image "${conda_image_name}" "${folder_name}/${conda_docker_file_name}"
+    build_image "${conda_image_name}" "${folder_name}/${conda_docker_file_name}" "${conda_apache_spark_version}" "${conda_hadoop_short_version}"
 }
 
 #######################################
@@ -125,7 +130,7 @@ build_dotnet_spark_base_runtime() {
     local image_name="dotnet-spark-base-runtime:${dotnet_spark_version}"
     local docker_file_name="Dockerfile.dotnet-spark-base"
 
-    build_image "${image_name}" "spark_dotnet/${docker_file_name}"
+    build_image "${image_name}" "spark_dotnet/${docker_file_name}" 
 }
 
 #######################################
@@ -135,10 +140,10 @@ build_dotnet_spark_base_runtime() {
 #   A dotnet-spark docker image tagged with the .NET for Apache Spark version and the Apache Spark version.
 #######################################
 build_dotnet_spark_runtime() {
-    local image_name="dotnet-spark:${dotnet_spark_version}-${apache_spark_version}"
+    local image_name="dotnet-spark:${dotnet_spark_version}-${dotnet_apache_spark_version}"
     local docker_file_name="Dockerfile.dotnet-spark"
 
-    build_image "${image_name}" "spark_dotnet/${docker_file_name}"
+    build_image "${image_name}" "spark_dotnet/${docker_file_name}" "${dotnet_apache_spark_version}" "${dotnet_hadoop_short_version}"
 }
 
 finish()

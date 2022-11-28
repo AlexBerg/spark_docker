@@ -2,7 +2,7 @@ ARG DOTNET_SPARK_VERSION=2.1.1
 FROM dotnet-spark-base-runtime:${DOTNET_SPARK_VERSION}
 
 ARG SPARK_VERSION=3.2.1
-ARG HADOOP_VERSION=2.7
+ARG HADOOP_VERSION=3.2
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 ENV DEAMON_RUN=true \
     HADOOP_VERSION=${HADOOP_VERSION} \
@@ -12,7 +12,7 @@ ENV DEAMON_RUN=true \
     SPARK_DRIVER_PORT=7077 \
     SPARK_DRIVER_WEBUI_PORT=8080 \
     SPARK_DRIVER_URL="" \
-    SPARK_SUBMIT_PACKAGES="io.delta:delta-core_2.12:1.2.1" \
+    SPARK_SUBMIT_PACKAGES="io.delta:delta-core_2.12:2.0.1" \
     SPARK_VERSION=${SPARK_VERSION} \
     SPARK_WORKER_INSTANCES=1 \
     SPARK_WORKER_PORT=7078 \
@@ -38,8 +38,8 @@ RUN mkdir /workspace \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && chmod 755 /usr/local/bin/start-spark-debug.sh \
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v7.2.2/mssql-jdbc-7.2.2.jre8.jar \
-    && cp mssql-jdbc-7.2.2.jre8.jar spark/jars \
+    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar\
+    && cp mssql-jdbc-9.4.0.jre8.jar spark/jars \
     && mkdir /shared_data
 
 COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
