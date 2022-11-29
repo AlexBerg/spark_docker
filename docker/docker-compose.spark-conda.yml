@@ -41,7 +41,7 @@ services:
     networks:
       - sparknet
     volumes:
-      - "./minio/data:/shared_date/minio/lake"
+      - "./container_data/minio/lake:/data"
   
   hive-metastore:
     hostname: hive-metastore
@@ -70,8 +70,6 @@ services:
       context: .
       dockerfile: ./spark_conda/Dockerfile.conda
       args:
-        - SPARK_VERSION=3.3.1
-        - HADOOP_VERSION=3.3
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     image: spark-conda:3.3.1
     ports: 
@@ -80,7 +78,6 @@ services:
       - sparknet
     volumes:
       - "../:/workspace"
-      - "./container_data/table_data:/shared_data/table_data"
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
     depends_on:
       - minio-lake

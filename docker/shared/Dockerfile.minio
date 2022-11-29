@@ -22,4 +22,4 @@ RUN sed -i "s|<HIVEUSERPASSWORD>|${HIVE_USER_PASSWORD}|g" /scripts/init-minio.sh
  && sed -i "s|<ROOTADMIN>|${MINIO_ROOT_USER}|g" /scripts/init-minio.sh \
  && sed -i "s|<ROOTPASSWORD>|${MINIO_ROOT_PASSWORD}|g" /scripts/init-minio.sh
 
-RUN ["/bin/bash", "/scripts/init-minio.sh"]
+ENTRYPOINT ["/bin/bash", "/scripts/init-minio.sh"]
