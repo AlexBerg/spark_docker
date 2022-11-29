@@ -39,12 +39,15 @@ RUN mkdir /workspace \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && chmod 755 /usr/local/bin/start-spark-debug.sh \
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar\
-    && cp mssql-jdbc-9.4.0.jre8.jar spark/jars \
+    && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.1/hadoop-aws-3.3.1.jar \
+    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.901/aws-java-sdk-bundle-1.11.901.jar \
+    && mv *.jar spark/jars \
     && mkdir /shared_data
 
-COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
+COPY shared/templates/hive-site-minio.xml /spark/conf/hive-site.xml
 
-RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
+RUN sed -i "s|HIVEUSERSQLPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml \
+    && sed -i "s|HIVEUSERMINIOPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
 
 EXPOSE 8080 8081 7077 6066 5567 4040
 

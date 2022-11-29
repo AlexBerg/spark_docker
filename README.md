@@ -13,17 +13,21 @@ in .NET. Both setups include support for Delta Lake.
 The reason for the different setups using different spark version is simply that the highest version of Spark currently supported by Spark DotNet is 3.2.1
 
 #### Shared
-* Hive metastore 3.1.2 (Hadoop 3.3.1)
-* SQL Server 2019(latest)
+* Hive metastore 3.1.2 (Hadoop 3.3.2)
+* SQL Server 2019 (Dockerfile will pull latest sql server image)
+* Minio latest version (Dockerfile will pull latest minio image)
 #### Python (Conda)
-* Spark 3.3.1 (Hadoop 3.3.1)
+* Spark 3.3.1 (Hadoop 3.3.2)
 * Delta lake 2.1.1
-* Conda latest linux version
+* Conda (Dockerfile downloads and installs latest conda version)
 #### Dotnet
-* Spark 3.2.1 
+* Spark 3.2.1 (Hadoop 3.3.1) 
 * .NET Core 3.1
 * .NET Spark 2.1.1
 * Delta lake 2.0.1
+
+**_NOTE:_** When installing Spark 3.2.1 with Hadoop 3.x pre compiled the file name in the archive says hadoop3.2. The actual spark installation actually comes with
+Hadoop 3.3.1 pre-compiled, and not 3.2.x. 
 
 ## Spark with conda container
 This container comes with latest linux version of conda pre-installed and initalized in the bash shell.
