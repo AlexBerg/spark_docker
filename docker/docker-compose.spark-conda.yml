@@ -22,6 +22,25 @@ services:
       - "./container_data/mssql/log:/var/opt/mssql/log"
       - "./container_data/mssql/data:/var/opt/mssql/data"
       - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
+
+  minio-lake:
+    hostname: minio-lake
+    container_name: spark-minio-lake
+    build:
+      context: ./shared
+      dockerfile: Dockerfile.minio
+      args:
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
+        - MINIO_ROOT_USER=minio_user
+        - MINIO_ROOT_PASSWORD=minio_password
+    image: minio:latest
+    ports:
+      - 9000:9000
+      - 9001:9001
+    networks:
+      - sparknet
+    volumes:
+      - "./container_data/minio/lake:/data"
   
   hive-metastore:
     hostname: hive-metastore
@@ -42,6 +61,7 @@ services:
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
     depends_on:
       - mssql
+      - minio-lake
 
   conda_spark:
     container_name: spark-conda
@@ -49,8 +69,6 @@ services:
       context: .
       dockerfile: ./spark_conda/Dockerfile.conda
       args:
-        - SPARK_VERSION=3.3.1
-        - HADOOP_VERSION=3.3
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
     image: spark-conda:3.3.1
     ports: 
@@ -59,8 +77,9 @@ services:
       - sparknet
     volumes:
       - "../:/workspace"
-      - "./container_data/table_data:/shared_data/table_data"
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
+    depends_on:
+      - minio-lake
 
 networks:
   sparknet:

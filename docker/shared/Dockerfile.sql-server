@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/mssql/server:2019-latest
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 ARG SA_PW=MostSecretPW!
 
-ENV SA_PASSWORD=$SA_PW
+ENV SA_PASSWORD=${SA_PW}
 
 USER root
 
@@ -11,9 +11,9 @@ RUN mkdir -p /usr/src/app
 
 COPY templates/sql-scripts/* /usr/src/app
 
-RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /usr/src/app/init_metastore.sql
+RUN sed -i "s|<HIVEUSERSQLPASSWORD>|${HIVE_USER_PASSWORD}|g" /usr/src/app/init_metastore.sql
 
-RUN sed -i "s|MostSecretPW!|${SA_PW}|g" /usr/src/app/entrypoint.sh
+RUN sed -i "s|<SAPASSWORD>|${SA_PW}|g" /usr/src/app/entrypoint.sh
 
 USER mssql
 

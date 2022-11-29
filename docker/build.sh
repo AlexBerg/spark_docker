@@ -9,7 +9,7 @@ set -o pipefail # dont hide errors within pipes
 
 readonly conda_apache_spark_version=3.3.1
 readonly dotnet_apache_spark_version=3.2.1
-readonly conda_hadoop_short_version=3.3
+readonly conda_hadoop_short_version=3
 readonly dotnet_hadoop_short_version=3.2
 readonly scala_version=2.12
 readonly dotnet_core_version=3.1
@@ -69,7 +69,7 @@ build_image() {
     fi
 
     local build_args="--build-arg SPARK_VERSION=${apache_spark_version}
-        --build-arg HADOOP_VERSION=${hadoop_short_version}"
+        --build-arg HADOOP_VERSION_SHORT=${hadoop_short_version}"
     local cmd="docker build ${build_args} -f ${docker_file_name} -t ${image_name} ."
 
     if [ -n "${proxy}" ]

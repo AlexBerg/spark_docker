@@ -20,18 +20,13 @@
    </property>
    <property>
       <name>javax.jdo.option.ConnectionPassword</name>
-      <value>Supersecretpassw0rd!</value>
+      <value>HIVEUSERSQLPASSWORD</value>
       <description>password to use against metastore database</description>
    </property>
    <property>
       <name>hive.metastore.uris</name>
       <value>thrift://hive-metastore:9083</value>
       <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
-   </property>
-   <property>
-      <name>hive.metastore.warehouse.dir</name>
-      <value>/shared_data/hive/warehouse</value>
-      <description>location of default database for the warehouse</description>
    </property>
    <property>
       <name>hive.metastore.db.type</name>
@@ -52,8 +47,32 @@
       <description>Specify that we download jars from maven for now.</description>
    </property>
    <property>
-      <name>hive.metastore.sharedPrefixes</name>
-      <value>com.microsoft.sqlserver</value>
-      <description>JBCD driver to be used to talk to metastore</description>
+      <name>fs.s3a.endpoint</name>
+      <description>AWS S3 endpoint to connect to.</description>
+      <value>http://minio-lake:9000</value>
+   </property>
+   <property>
+      <name>fs.s3a.access.key</name>
+      <description>AWS access key ID.</description>
+      <value>minio_hive_user</value>
+   </property>
+   <property>
+      <name>fs.s3a.secret.key</name>
+      <description>AWS secret key.</description>
+      <value>HIVEUSERMINIOPASSWORD</value>
+   </property>
+   <property>
+    <name>fs.s3a.connection.ssl.enabled</name>
+    <value>false</value>
+   </property>
+   <property>
+      <name>fs.s3a.path.style.access</name>
+      <description>Enable S3 path style access.</description>
+      <value>true</value>
+   </property>
+   <property>
+      <name>hive.metastore.warehouse.dir</name>
+      <value>s3a://hive/warehouse</value>
+      <description>location of default database for the warehouse</description>
    </property>
 </configuration>

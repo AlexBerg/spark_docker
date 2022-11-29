@@ -13,6 +13,7 @@ RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.s
 
 ENV PATH=$CONDA_DIR/bin:$PATH
 
-RUN sed -i "s|Supersecretpassw0rd!|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
+RUN sed -i "s|HIVEUSERSQLPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml \
+    && sed -i "s|HIVEUSERMINIOPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml
 
 RUN ["/bin/bash", "-c", "conda init bash"]

@@ -1,6 +1,6 @@
 CREATE DATABASE hive_metastore;
 GO
-CREATE LOGIN hive_user WITH PASSWORD='Supersecretpassw0rd!';
+CREATE LOGIN hive_user WITH PASSWORD='<HIVEUSERSQLPASSWORD>';
 GO
 USE hive_metastore
 GO

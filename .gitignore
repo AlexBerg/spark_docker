@@ -1,5 +1,6 @@
 **/.vscode/
 **/container_data
+**/minio
 **/__pycache__
 **/bin/
 **/obj/
