@@ -4,64 +4,18 @@ name: "spark_conda"
 services:
   mssql:
     hostname: mssql
-    container_name: spark-mssql
-    build:
-      context: ./shared
-      dockerfile: Dockerfile.sql-server
-      args:
-        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-        - SA_PW=MostSecretPW!
-    image: mssql:2019
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - 1433:1433
     networks:
       - sparknet
-    volumes:
-      - "./container_data/mssql/log:/var/opt/mssql/log"
-      - "./container_data/mssql/data:/var/opt/mssql/data"
-      - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
 
   minio-lake:
     hostname: minio-lake
-    container_name: spark-minio-lake
-    build:
-      context: ./shared
-      dockerfile: Dockerfile.minio
-      args:
-        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-        - MINIO_ROOT_USER=minio_user
-        - MINIO_ROOT_PASSWORD=minio_password
-    image: minio:latest
-    ports:
-      - 9000:9000
-      - 9001:9001
     networks:
       - sparknet
-    volumes:
-      - "./container_data/minio/lake:/data"
   
   hive-metastore:
     hostname: hive-metastore
-    container_name: spark-hive-metastore
-    build:
-      context: ./shared
-      dockerfile: Dockerfile.hive
-      args:
-        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-    entrypoint: /scripts/init-hive.sh
-    image: hive:3.1.2
-    ports:
-      - 10000:10000
-      - 9083:9083
     networks:
       - sparknet
-    volumes:
-      - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
-    depends_on:
-      - mssql
-      - minio-lake
 
   conda_spark:
     container_name: spark-conda
