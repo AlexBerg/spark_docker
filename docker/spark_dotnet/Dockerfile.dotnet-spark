@@ -44,7 +44,7 @@ RUN mkdir /workspace \
     && mv *.jar spark/jars \
     && mkdir /shared_data
 
-COPY shared/templates/hive-site-minio.xml /spark/conf/hive-site.xml
+COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
 
 RUN sed -i "s|HIVEUSERSQLPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml \
     && sed -i "s|HIVEUSERMINIOPASSWORD|${HIVE_USER_PASSWORD}|g" /spark/conf/hive-site.xml

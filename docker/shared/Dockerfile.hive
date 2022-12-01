@@ -35,7 +35,7 @@ RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastor
     && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1026/aws-java-sdk-bundle-1.11.1026.jar \
     && mv *.jar opt/hive/lib
 
-COPY templates/hive-site-minio.xml /opt/hive/conf/hive-site.xml
+COPY templates/hive-site.xml /opt/hive/conf/hive-site.xml
 COPY templates/hive-scripts/init-hive.sh /scripts/init-hive.sh
 
 RUN sed -i "s|HIVEUSERSQLPASSWORD|${HIVE_USER_PASSWORD}|g" /opt/hive/conf/hive-site.xml \

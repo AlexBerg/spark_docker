@@ -37,12 +37,12 @@
       </description>
    </property>
    <property>
-      <name>hive.metastore.version</name>
+      <name>spark.sql.hive.metastore.version</name>
       <value>3.1.2</value>
       <description>Hive version to use.</description>
    </property>
    <property>
-      <name>hive.metastore.jars</name>
+      <name>spark.sql.hive.metastore.jars</name>
       <value>maven</value>
       <description>Specify that we download jars from maven for now.</description>
    </property>
@@ -72,6 +72,11 @@
    </property>
    <property>
       <name>hive.metastore.warehouse.dir</name>
+      <value>s3a://hive/warehouse</value>
+      <description>location of default database for the warehouse</description>
+   </property>
+   <property>
+      <name>spark.sql.warehouse.dir</name>
       <value>s3a://hive/warehouse</value>
       <description>location of default database for the warehouse</description>
    </property>
