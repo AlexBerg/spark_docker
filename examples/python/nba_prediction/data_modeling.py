@@ -1,4 +1,4 @@
-from helper_functions import get_spark_session, read_from_csv, write_to_delta_table
+from helper_functions import get_spark_session, read_from_csv, write_to_table
 from pyspark.sql import SparkSession, DataFrame
 
 import pyspark.sql.functions as F
@@ -9,7 +9,15 @@ _path_to_raw = "shared_datasets/"
 def check_if_nba_tables_exist(spark: SparkSession) -> bool:
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
+    dbs = spark.catalog.listDatabases()
+
+    if all(db.name.lower() != "nba" for db in dbs):
+        return False
+
+    spark.catalog.setCurrentDatabase("nba")
+
     tables = spark.catalog.listTables()
+
     if any(all(table.name.lower() != table_name.lower() for table in tables) for table_name in table_names):
         return False
     
@@ -17,6 +25,11 @@ def check_if_nba_tables_exist(spark: SparkSession) -> bool:
 
 
 def drop_all_nba_tables(spark: SparkSession):
+    try:
+        spark.sql("DROP DATABASE nba CASCADE;")
+    except Exception:
+        print("Exception when trying to drop nba database.")
+
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
 
@@ -28,6 +41,10 @@ def drop_all_nba_tables(spark: SparkSession):
 
 
 def create_nba_delta_tables(spark: SparkSession):
+    spark.sql("CREATE DATABASE IF NOT EXISTS nba;")
+
+    spark.sql("USE DATABASE nba;")
+
     teams = _create_team_tables(spark)
 
     _create_player_tables(spark, teams)
@@ -53,7 +70,7 @@ def _create_team_tables(spark: SparkSession) -> DataFrame:
         .distinct()\
         .withColumn("TeamId", F.concat(F.hex(F.col("League")), F.hex(F.col("TeamNameShort"))))
     
-    write_to_delta_table(teams, "Teams")
+    write_to_table(teams, "Teams")
 
     season_stats_cond = [team_summaries.abbreviation == teams.TeamNameShort, team_summaries.lg == teams.League]
     team_season_stats = team_summaries.join(teams, season_stats_cond)\
@@ -91,7 +108,7 @@ def _create_team_tables(spark: SparkSession) -> DataFrame:
 
     team_season_stats = _cast_column_to_float(team_season_stats)
 
-    write_to_delta_table(team_season_stats, "TeamSeasonStats")
+    write_to_table(team_season_stats, "TeamSeasonStats")
 
     return return_df
 
@@ -114,7 +131,7 @@ def _create_players_table(spark: SparkSession):
             F.col("player").alias("PlayerName"),
             F.col("hof").alias("MadeHallOfFame").cast(T.BooleanType()))
 
-    write_to_delta_table(player_info, "Players")
+    write_to_table(player_info, "Players")
 
 
 def _create_player_award_share_table(spark: SparkSession, teams: DataFrame):
@@ -132,7 +149,7 @@ def _create_player_award_share_table(spark: SparkSession, teams: DataFrame):
             F.col("share").alias("Share").cast(T.FloatType()),
             F.col("winner").alias("WonAward").cast(T.BooleanType()))
 
-    write_to_delta_table(player_award_share, "PlayerSeasonAwardShare")
+    write_to_table(player_award_share, "PlayerSeasonAwardShare")
 
 
 def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: DataFrame):
@@ -167,7 +184,7 @@ def _create_player_season_advanced_stats_tables(spark: SparkSession, teams: Data
 
     advanced_stats = _cast_column_to_float(advanced_stats)
 
-    write_to_delta_table(advanced_stats, "PlayerSeasonAdvancedStats")
+    write_to_table(advanced_stats, "PlayerSeasonAdvancedStats")
 
 
 def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
@@ -208,7 +225,7 @@ def _create_player_season_stats_table(spark: SparkSession, teams: DataFrame):
 
     player_per_game_stats = _cast_column_to_float(player_per_game_stats)
 
-    write_to_delta_table(player_per_game_stats, "PlayerSeasonStats")
+    write_to_table(player_per_game_stats, "PlayerSeasonStats")
 
 
 
@@ -236,7 +253,7 @@ def _create_player_play_by_play_table(spark: SparkSession, teams: DataFrame):
 
     play_by_play = _cast_column_to_float(play_by_play)
 
-    write_to_delta_table(play_by_play, "PlayerSeasonPlayByPlayStats")
+    write_to_table(play_by_play, "PlayerSeasonPlayByPlayStats")
 
 
 def _cast_column_to_float(df: DataFrame) -> DataFrame:

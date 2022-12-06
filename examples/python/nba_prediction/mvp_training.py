@@ -15,6 +15,8 @@ import pyspark.sql.types as T
 
 
 def _create_mvp_award_share_with_stats_dataset(spark: SparkSession) -> DataFrame:
+    spark.sql("USE DATABASE nba;")
+
     mvp_award_share_with_stats = spark.sql(
         """SELECT pt.*, a.Share, a.Award, a.WonAward FROM (
                 SELECT p.*, t.GamesPlayed as TeamGamesPlayed, t.League, ROUND(t.Wins / t.GamesPlayed, 2) AS WinPercentage, t.AverageMarginOfVictory, t.NetRating FROM
