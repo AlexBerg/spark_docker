@@ -9,7 +9,15 @@ _path_to_raw = "shared_datasets/"
 def check_if_nba_tables_exist(spark: SparkSession) -> bool:
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
+    dbs = spark.catalog.listDatabases()
+
+    if all(db.name.lower() != "nba" for db in dbs):
+        return False
+
+    spark.catalog.setCurrentDatabase("nba")
+
     tables = spark.catalog.listTables()
+
     if any(all(table.name.lower() != table_name.lower() for table in tables) for table_name in table_names):
         return False
     
@@ -17,6 +25,11 @@ def check_if_nba_tables_exist(spark: SparkSession) -> bool:
 
 
 def drop_all_nba_tables(spark: SparkSession):
+    try:
+        spark.sql("DROP DATABASE nba CASCADE;")
+    except Exception:
+        print("Exception when trying to drop nba database.")
+
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",
         "PlayerSeasonPlayByPlayStats", "PlayerSeasonStats"]
 
@@ -28,6 +41,10 @@ def drop_all_nba_tables(spark: SparkSession):
 
 
 def create_nba_delta_tables(spark: SparkSession):
+    spark.sql("CREATE DATABASE IF NOT EXISTS nba;")
+
+    spark.sql("USE DATABASE nba;")
+
     teams = _create_team_tables(spark)
 
     _create_player_tables(spark, teams)
