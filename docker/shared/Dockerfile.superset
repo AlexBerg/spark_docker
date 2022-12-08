@@ -10,24 +10,25 @@ ARG SUPERSET_ADMIN_FIRST_NAME=admin
 ARG SUPERSET_ADMIN_LAST_NAME=admin
 ARG SUPERSET_ADMIN_PWD=SupersecretAdminpassw0rd!
 
-ENV PYTHONPATH="${SUPERSET_HOME}:${PYTHONPATH}"
+ENV PYTHONPATH="${PYTHONPATH}:${SUPERSET_HOME}"
 
 RUN apt-get update \
     && apt-get install -y \
-        build-essentials \
+        build-essential \
+        git \
         libssl-dev \
         libffi-dev \
         libsasl2-dev \
         libldap2-dev \
     && pip install -U pip \
     && pip install --no-cache-dir \
-        pymssql apache-superset==${SUPERSET_VERSION} pyhive
+        pymssql apache-superset==${SUPERSET_VERSION} pyhive pillow markupsafe==2.0.1
 
-COPY templates/superset-scripts/superset_config.py ${PYTHONPATH}/superset_config.py
-COPY templates/superset-scripts/init-superset.sh /scripts/superset.sh
+COPY templates/superset-scripts/superset_config.py /superset/superset_config.py
+COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
 
-RUN sed -i "s|<SUPERSETUSERSQLPASSWORD>|${SUPERSET_SQL_PASSWORD}|g" ${PYTHONPATH}/superset_config.py
-RUN sed -i "s|<SUPERSETSECRETKEY>|${SUPERSET_SECRET_KEY}|g" ${PYTHONPATH}/superset_config.py
+RUN sed -i "s|<SUPERSETUSERSQLPASSWORD>|${SUPERSET_SQL_PASSWORD}|g" /superset/superset_config.py
+RUN sed -i "s|<SUPERSETSECRETKEY>|${SUPERSET_SECRET_KEY}|g" /superset/superset_config.py
 RUN sed -i "s|<ADMIN_USER>|${SUPERSET_ADMIN}|g" /scripts/init-superset.sh \
     && sed -i "s|<ADMIN_FIRST_NAME>|${SUPERSET_ADMIN_FIRST_NAME}|g" /scripts/init-superset.sh \
     && sed -i "s|<ADMIN_LAST_NAME>|${SUPERSET_ADMIN_LAST_NAME}|g" /scripts/init-superset.sh \
@@ -35,6 +36,6 @@ RUN sed -i "s|<ADMIN_USER>|${SUPERSET_ADMIN}|g" /scripts/init-superset.sh \
 
 RUN chmod +x /scripts/init-superset.sh
 
-EXPOSE 8080
+EXPOSE 8088
 
-ENTRYPOINT [ "/bin/bash", "/scripts/init-superset.sh" ]
+#ENTRYPOINT [ "/bin/bash", "/scripts/init-superset.sh" ]
