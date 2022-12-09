@@ -1,6 +1,10 @@
-set -eo pipefail
-
 export FLASK_APP=superset
+
+echo 'Running database upgrade'
+
+superset db upgrade
+
+echo 'Creating admin'
 
 superset fab create-admin \
     --username <ADMIN_USER> \
@@ -8,8 +12,10 @@ superset fab create-admin \
     --lastname <ADMIN_LAST_NAME> \
     --password <ADMIN_PWD>
 
-superset db upgrade
+echo 'Running init'
 
 superset init
 
-superset runserver -p 8088
+echo 'Starting development server'
+
+superset run -p 8088 --with-treads --reload --host=8088
