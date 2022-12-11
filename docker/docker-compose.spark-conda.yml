@@ -32,7 +32,6 @@ services:
     image: spark-conda:3.3.1
     ports: 
       - 4040:4040
-      - 10010:10000
     hostname: spark
     networks:
       - sparknet
