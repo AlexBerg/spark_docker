@@ -1,0 +1,43 @@
+FROM python:3.8-slim
+
+ENV SUPERSET_VERSION=1.5.2
+ENV SUPERSET_HOME=/superset
+
+ARG SUPERSET_SECRET_KEY=Supersecretkey!
+#ARG SUPERSET_SQL_PASSWORD=Supersecretpassw0rd!
+ARG SUPERSET_ADMIN=admin
+ARG SUPERSET_ADMIN_FIRST_NAME=admin
+ARG SUPERSET_ADMIN_LAST_NAME=admin
+ARG SUPERSET_ADMIN_PWD=SupersecretAdminpassw0rd!
+ARG SUPERSET_ADMIN_EMAIL=admin@nowhere.org
+
+ENV PYTHONPATH="${PYTHONPATH}:${SUPERSET_HOME}:/superset_config"
+
+RUN apt-get update \
+    && apt-get install -y \
+        build-essential \
+        git \
+        libssl-dev \
+        libffi-dev \
+        libsasl2-dev \
+        libldap2-dev \
+    && pip install -U pip \
+    && pip install --no-cache-dir \
+        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.0.1 \
+        sasl thrift_sasl
+
+COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
+COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
+
+RUN sed -i "s|<SUPERSETSECRETKEY>|${SUPERSET_SECRET_KEY}|g" /superset_config/superset_config.py
+RUN sed -i "s|<ADMIN_USER>|${SUPERSET_ADMIN}|g" /scripts/init-superset.sh \
+    && sed -i "s|<ADMIN_FIRST_NAME>|${SUPERSET_ADMIN_FIRST_NAME}|g" /scripts/init-superset.sh \
+    && sed -i "s|<ADMIN_LAST_NAME>|${SUPERSET_ADMIN_LAST_NAME}|g" /scripts/init-superset.sh \
+    && sed -i "s|<ADMIN_PWD>|${SUPERSET_ADMIN_PWD}|g" /scripts/init-superset.sh \
+    && sed -i "s|<ADMIN_EMAIL>|${SUPERSET_ADMIN_EMAIL}|g" /scripts/init-superset.sh
+
+RUN chmod +x /scripts/init-superset.sh
+
+EXPOSE 8088
+
+ENTRYPOINT [ "/bin/bash", "/scripts/init-superset.sh" ]

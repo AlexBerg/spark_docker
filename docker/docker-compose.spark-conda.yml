@@ -16,6 +16,11 @@ services:
     hostname: hive-metastore
     networks:
       - sparknet
+  
+  superset:
+    hostname: superset
+    networks:
+      - sparknet
 
   conda_spark:
     container_name: spark-conda
@@ -27,6 +32,7 @@ services:
     image: spark-conda:3.3.1
     ports: 
       - 4040:4040
+    hostname: spark
     networks:
       - sparknet
     volumes:

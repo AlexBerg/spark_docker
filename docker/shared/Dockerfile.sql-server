@@ -11,7 +11,7 @@ RUN mkdir -p /usr/src/app
 
 COPY templates/sql-scripts/* /usr/src/app
 
-RUN sed -i "s|<HIVEUSERSQLPASSWORD>|${HIVE_USER_PASSWORD}|g" /usr/src/app/init_metastore.sql
+RUN sed -i "s|<HIVEUSERSQLPASSWORD>|${HIVE_USER_PASSWORD}|g" /usr/src/app/init_databases.sql
 
 RUN sed -i "s|<SAPASSWORD>|${SA_PW}|g" /usr/src/app/entrypoint.sh
 

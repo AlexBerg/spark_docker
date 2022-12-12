@@ -13,7 +13,8 @@ ENV DEAMON_RUN=true \
     SPARK_VERSION=${SPARK_VERSION} \
     SPARK_WORKER_INSTANCES=1 \
     SPARK_WORKER_PORT=7078 \
-    SPARK_WORKER_WEBUI_PORT=8081
+    SPARK_WORKER_WEBUI_PORT=8081 \
+    START_THRIFT_SERVER=true
 ENV PATH="${PATH}:${SPARK_HOME}/bin"
 
 COPY spark_conda/supervisor.conf /etc/supervisor.conf
@@ -28,6 +29,7 @@ RUN mkdir /workspace \
     && rm spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION_SHORT}.tgz \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
+    && chmod 755 /usr/local/bin/start-thriftserver.sh \
     # JAR file for jbdc connector to mssql server
     && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \ 
     # JAR files for Delta lake
@@ -43,6 +45,6 @@ RUN mkdir /workspace \
 
 COPY shared/templates/hive-site.xml /spark/conf/hive-site.xml
 
-EXPOSE 8080 8081 7077 6066 5567 4040
+EXPOSE 8080 8081 7077 6066 5567 4040 10000
 
 CMD ["supervisord", "-c", "/etc/supervisor.conf"]
