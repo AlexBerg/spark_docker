@@ -37,6 +37,7 @@ services:
     ports: 
       - 5567:5567
       - 4040:4040
+    hostname: spark
     networks:
       - sparknet
     volumes:
