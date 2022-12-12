@@ -16,6 +16,11 @@ services:
     hostname: hive-metastore
     networks:
       - sparknet
+  
+  superset:
+    hostname: superset
+    networks:
+      - sparknet
 
   dotnet_spark:
     container_name: dotnet-spark

@@ -23,7 +23,7 @@ RUN apt-get update \
         libldap2-dev \
     && pip install -U pip \
     && pip install --no-cache-dir \
-        apache-superset==${SUPERSET_VERSION} pyhive pillow markupsafe==2.0.1 \
+        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.0.1 \
         sasl thrift_sasl
 
 COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
