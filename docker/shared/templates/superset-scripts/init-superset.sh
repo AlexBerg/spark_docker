@@ -1,21 +1,33 @@
+#!/bin/bash
+
 export FLASK_APP=superset
 
-echo 'Running database upgrade'
+if [ ! -f /scripts/.init-superset-complete ]; then
 
-superset db upgrade
+    echo 'Running database upgrade'
 
-echo 'Creating admin'
+    superset db upgrade
 
-superset fab create-admin \
-    --username <ADMIN_USER> \
-    --firstname <ADMIN_FIRST_NAME> \
-    --lastname <ADMIN_LAST_NAME> \
-    --password <ADMIN_PWD> \
-    --email <ADMIN_EMAIL>
+    echo 'Creating admin'
 
-echo 'Running init'
+    superset fab create-admin \
+        --username <ADMIN_USER> \
+        --firstname <ADMIN_FIRST_NAME> \
+        --lastname <ADMIN_LAST_NAME> \
+        --password <ADMIN_PWD> \
+        --email <ADMIN_EMAIL>
 
-superset init
+    echo 'Running init'
+
+    superset init
+
+    touch /scripts/.init-superset-complete
+else
+    echo 'Superset already initialized. Running database upgrade' 
+
+    superset db upgrade
+fi
+
 
 echo 'Starting development server'
 
