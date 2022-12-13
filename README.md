@@ -16,6 +16,7 @@ The reason for the different setups using different spark version is simply that
 * Hive metastore 3.1.2 (Hadoop 3.3.2)
 * SQL Server 2019 (Dockerfile will pull latest sql server image)
 * Minio latest version (Dockerfile will pull latest minio image)
+* Apache Superset 1.5.2
 #### Python (Conda)
 * Spark 3.3.1 (Hadoop 3.3.2)
 * Delta lake 2.1.1
@@ -45,6 +46,10 @@ Microsoft.Spark version 2.1.1
 4. Open the workspace folder in the container in VSCode
 5. Proceed as normal when developing in either python or .NET! (Important to note that this only tested with .NET Core 3.1 for now). There are example projects in the example folder that exemplify this.
 
+### Superset
+To connect the Apache Superset to the Spark SQL as database, configure with the SQL Alchemy string hive://spark:10000 (unless you've changed the spark container hostname).
 
+**_NOTE:_** There seems to be a bug in pyhive (which is used to be able to connect to Spark SQL) which results in not being able to show the tables in a database, instead
+it just shows copies of the database name. To be able to create charts, you will need to use SQL Lab to write queries and then save those results as datasets.
 
 Originally inspired by and adopted from the [3rdman dotnet-spark project](https://github.com/indy-3rdman/docker-dotnet-spark)
