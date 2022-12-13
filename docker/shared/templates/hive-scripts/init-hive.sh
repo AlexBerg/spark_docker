@@ -2,9 +2,16 @@
 
 set +ex
 
-sleep 30
+if [ ! -f /scripts/.init-hive-complete ]; then
 
-$HIVE_HOME/bin/schematool -dbType mssql -initSchema
+    sleep 30
+
+    $HIVE_HOME/bin/schematool -dbType mssql -initSchema
+
+    touch /scripts/.init-hive-complete
+else
+    echo "Hive already initialized"
+fi
 
 sleep 10
 
