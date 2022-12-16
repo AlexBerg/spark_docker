@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  postgres:
+    container_name: spark_postgres
+    build:
+      context: ./shared
+      dockerfile: Dockerfile.postgres
+      args: 
+        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
+    image: pgsql:15.1
+    environment:
+      - POSTGRES_PASSWORD=MostSecretPW!
+    ports:
+      - 5432:5432
+    volumes:
+      - "./container_data/postgres/data:/var/lib/postgresql/data"
+
   mssql:
     container_name: spark-mssql
     build:
