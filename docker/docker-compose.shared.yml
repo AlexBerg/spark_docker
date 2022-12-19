@@ -14,7 +14,18 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - "./container_data/postgres/data:/var/lib/postgresql/data"
+      - "./container_data/postgres:/var/lib/postgresql"
+
+  pgadmin:
+    container_name: spark_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin@nowhere.info
+      - PGADMIN_DEFAULT_PASSWORD=MostSecretPW!
+    ports:
+      - 5055:80
+    volumes:
+      - "./container_data/pgadmin:/var/lib/pgadmin"
 
   mssql:
     container_name: spark-mssql

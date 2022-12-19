@@ -7,6 +7,16 @@ services:
     networks:
       - sparknet
 
+  postgres:
+    hostname: postgres
+    networks:
+      - sparknet
+
+  pgadmin:
+    hostname: pgadmin
+    networks:
+      - sparknet
+
   minio-lake:
     hostname: minio-lake
     networks:
