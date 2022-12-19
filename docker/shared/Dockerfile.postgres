@@ -5,5 +5,3 @@ ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
 COPY templates/postgres-scripts/init_databases.sql /docker-entrypoint-initdb.d/init_databases.sql
 
 RUN sed -i "s|<HIVEUSERSQLPASSWORD>|${HIVE_USER_PASSWORD}|g" /docker-entrypoint-initdb.d/init_databases.sql
-
-CMD [ "postgres", "-h 0.0.0.0" ]
