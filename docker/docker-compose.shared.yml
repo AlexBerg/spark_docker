@@ -11,10 +11,9 @@ services:
     image: pgsql:15.1
     environment:
       - POSTGRES_PASSWORD=MostSecretPW!
+      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - 5432:5432
-    volumes:
-      - "./container_data/postgres:/var/lib/postgresql"
 
   pgadmin:
     container_name: spark_pgadmin
