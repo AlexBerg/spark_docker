@@ -14,7 +14,7 @@ The reason for the different setups using different spark version is simply that
 
 #### Shared
 * Hive metastore 3.1.2 (Hadoop 3.3.2)
-* SQL Server 2019 (Dockerfile will pull latest sql server image)
+* Postgres 15.1
 * Minio latest version (Dockerfile will pull latest minio image)
 * Apache Superset 1.5.2
 #### Python (Conda)
