@@ -1,23 +1,30 @@
 version: '3'
 
 services:
-  mssql:
-    container_name: spark-mssql
+  postgres:
+    container_name: spark_postgres
     build:
       context: ./shared
-      dockerfile: Dockerfile.sql-server
-      args:
+      dockerfile: Dockerfile.postgres
+      args: 
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-        - SA_PW=MostSecretPW!
-    image: mssql:2019
+    image: pgsql:15.1
     environment:
-      - ACCEPT_EULA=Y
+      - POSTGRES_PASSWORD=MostSecretPW!
+      - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
-      - 1433:1433
+      - 5432:5432
+
+  pgadmin:
+    container_name: spark_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin@nowhere.info
+      - PGADMIN_DEFAULT_PASSWORD=MostSecretPW!
+    ports:
+      - 5055:80
     volumes:
-      - "./container_data/mssql/log:/var/opt/mssql/log"
-      - "./container_data/mssql/data:/var/opt/mssql/data"
-      - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
+      - "./container_data/pgadmin:/var/lib/pgadmin"
 
   minio-lake:
     container_name: spark-minio-lake
@@ -50,7 +57,7 @@ services:
     volumes:
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
     depends_on:
-      - mssql
+      - postgres
       - minio-lake
   
   superset:

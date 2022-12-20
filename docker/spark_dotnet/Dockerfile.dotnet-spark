@@ -39,7 +39,7 @@ RUN mkdir /workspace \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && chmod 755 /usr/local/bin/start-spark-debug.sh \
     && chmod 755 /usr/local/bin/start-thriftserver.sh \
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar\
+    && wget https://jdbc.postgresql.org/download/postgresql-42.5.1.jar\
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.1/hadoop-aws-3.3.1.jar \
     && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.901/aws-java-sdk-bundle-1.11.901.jar \
     && mv *.jar spark/jars \
