@@ -2,11 +2,6 @@ version: '3'
 name: "spark_conda"
 
 services:
-  mssql:
-    hostname: mssql
-    networks:
-      - sparknet
-
   postgres:
     hostname: postgres
     networks:

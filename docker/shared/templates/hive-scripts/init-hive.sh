@@ -6,7 +6,7 @@ if [ ! -f /scripts/.init-hive-complete ]; then
 
     sleep 30
 
-    $HIVE_HOME/bin/schematool -dbType mssql -initSchema
+    $HIVE_HOME/bin/schematool -dbType postgres -initSchema
 
     touch /scripts/.init-hive-complete
 else

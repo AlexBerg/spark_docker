@@ -30,8 +30,8 @@ RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastor
     && mv apache-hive-metastore-${HIVE_VERSION}-bin /opt/hive \
     && rm hive-standalone-metastore-${HIVE_VERSION}-bin.tar.gz \
     && mkdir -p /shared_data \
-    # JAR file for jbdc connector to mssql server which is used as the metadata store
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \
+    # JAR file for jbdc connector to postgres server which is used as the metadata store
+    && wget https://jdbc.postgresql.org/download/postgresql-42.5.1.jar \
     # # JAR files for Amazon S3 (required for connecting to Minio as warehouse)
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
     && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1026/aws-java-sdk-bundle-1.11.1026.jar \

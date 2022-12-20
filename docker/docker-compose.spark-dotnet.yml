@@ -2,8 +2,13 @@ version: '3'
 name: "spark_dotnet"
 
 services:
-  mssql:
-    hostname: mssql
+  postgres:
+    hostname: postgres
+    networks:
+      - sparknet
+
+  pgadmin:
+    hostname: pgadmin
     networks:
       - sparknet
 

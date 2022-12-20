@@ -26,24 +26,6 @@ services:
     volumes:
       - "./container_data/pgadmin:/var/lib/pgadmin"
 
-  mssql:
-    container_name: spark-mssql
-    build:
-      context: ./shared
-      dockerfile: Dockerfile.sql-server
-      args:
-        - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-        - SA_PW=MostSecretPW!
-    image: mssql:2019
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - 1433:1433
-    volumes:
-      - "./container_data/mssql/log:/var/opt/mssql/log"
-      - "./container_data/mssql/data:/var/opt/mssql/data"
-      - "./container_data/mssql/secrets:/var/opt/mssql/secrets"
-
   minio-lake:
     container_name: spark-minio-lake
     build:
@@ -75,7 +57,7 @@ services:
     volumes:
       - "./container_data/hive/warehouse:/shared_data/hive/warehouse"
     depends_on:
-      - mssql
+      - postgres
       - minio-lake
   
   superset:

@@ -30,8 +30,8 @@ RUN mkdir /workspace \
     && chmod 755 /usr/local/bin/start-spark-worker.sh \
     && chmod 755 /usr/local/bin/start-spark-driver.sh \
     && chmod 755 /usr/local/bin/start-thriftserver.sh \
-    # JAR file for jbdc connector to mssql server
-    && wget https://github.com/microsoft/mssql-jdbc/releases/download/v9.4.0/mssql-jdbc-9.4.0.jre8.jar \ 
+    # JAR file for jbdc connector to postgres server
+    && wget https://jdbc.postgresql.org/download/postgresql-42.5.1.jar \ 
     # JAR files for Delta lake
     && wget https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.1.1/delta-core_2.12-2.1.1.jar \
     && wget https://repo1.maven.org/maven2/io/delta/delta-storage/2.1.1/delta-storage-2.1.1.jar \
