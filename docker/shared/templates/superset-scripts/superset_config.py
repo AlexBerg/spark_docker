@@ -6,5 +6,5 @@ SUPERSET_WEBSERVER_PORT = 8088
 
 SECRET_KEY='<SUPERSETSECRETKEY>'
 
-#SQLALCHEMY_DATABASE_URI='mssql+pymssql://superset_user:<SUPERSETUSERSQLPASSWORD>@mssql:1433/superset?Encrypt=yes'
+SQLALCHEMY_DATABASE_URI='postgresql://superset_user:<SUPERSETUSERPASSWORD>@postgres:5432/superset_metastore'
 
