@@ -4,6 +4,8 @@ export FLASK_APP=superset
 
 if [ ! -f /scripts/.init-superset-complete ]; then
 
+    sleep 30
+    
     echo 'Running database upgrade'
 
     superset db upgrade
