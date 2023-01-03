@@ -5,3 +5,4 @@
 **/bin/
 **/obj/
 nuget.config
+docker/spark_dotnet/templates/HelloSpark/obj/Debug/netcoreapp3.1/HelloSpark.assets.cache
