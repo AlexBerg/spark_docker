@@ -16,6 +16,7 @@ services:
       - 5432:5432
 
   pgadmin:
+    user: root
     container_name: spark_pgadmin
     image: dpage/pgadmin4
     environment:

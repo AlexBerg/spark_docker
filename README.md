@@ -66,6 +66,9 @@ To enable GPU support in the docker container there are two things that are requ
 ### Superset
 To connect the Apache Superset to the Spark SQL as database, configure with the SQL Alchemy string hive://spark:10000 (unless you've changed the spark container hostname).
 
+#### Known current issue(s)
+There is currently some issue stopping Superset from starting correctly. The error message is that the module 'cryptography.hazmat.backends.openssl.x509' can not be found.
+
 **_NOTE:_** There seems to be a bug in pyhive (which is used to be able to connect to Spark SQL) which results in not being able to show the tables in a database, instead
 it just shows copies of the database name. To be able to create charts, you will need to use SQL Lab to write queries and then save those results as datasets.
 
