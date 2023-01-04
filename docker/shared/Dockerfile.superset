@@ -1,4 +1,4 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 ENV SUPERSET_VERSION=2.0.1
 ENV SUPERSET_HOME=/superset
@@ -25,9 +25,7 @@ RUN apt-get update \
     && pip install -U pip \
     && pip install --no-cache-dir \
         apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.0.1 \
-        sasl thrift_sasl psycopg2 \
-    && pip uninstall -y cryptography pyopenssl \
-    && pip install cryptography==3.4.7
+        sasl thrift_sasl psycopg2 cryptography==3.4.7 WTForms==2.3.0
 
 COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
 COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
