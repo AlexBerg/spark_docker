@@ -14,10 +14,13 @@ readonly dotnet_hadoop_short_version=3.2
 readonly scala_version=2.12
 readonly dotnet_core_version=3.1
 readonly dotnet_spark_version=2.1.1
+readonly cuda_version=11.4.0
+readonly ubuntu_version=18.04
 proxy=""
 
 build_dotnet=false
 build_conda=false
+use_gpu=false
 
 main() {
 
@@ -61,6 +64,7 @@ build_image() {
     local docker_file_name="${2}"
     local apache_spark_version=""
     local hadoop_short_version=""
+    local java_base_image="ubuntu:${ubuntu_version}"
 
     if [ $# -ge 3 ]
     then
@@ -68,8 +72,14 @@ build_image() {
         hadoop_short_version="${4}"
     fi
 
+    if [ $use_gpu == true ]
+    then
+        java_base_image="nvidia/cuda:${cuda_version}-base-ubuntu${ubuntu_version}"
+    fi
+
     local build_args="--build-arg SPARK_VERSION=${apache_spark_version}
-        --build-arg HADOOP_VERSION_SHORT=${hadoop_short_version}"
+        --build-arg HADOOP_VERSION_SHORT=${hadoop_short_version}
+        --build-arg JAVA_BASE_IMAGE=${java_base_image}"
     local cmd="docker build ${build_args} -f ${docker_file_name} -t ${image_name} ."
 
     if [ -n "${proxy}" ]
@@ -158,7 +168,7 @@ finish()
 }
 
 
-options=$(getopt -l "dotnet,conda" -o "dc" -a -- "$@")
+options=$(getopt -l "dotnet,conda,gpu" -o "dcg" -a -- "$@")
 
 eval set -- "$options"
 
@@ -172,6 +182,10 @@ do
         -c|--conda)
             build_conda=true
             echo "conda choosen"
+            ;;
+        -g|--gpu)
+            use_gpu=true
+            echo "gpu enabled"
             ;;
         --)
             shift

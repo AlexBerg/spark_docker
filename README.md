@@ -16,7 +16,7 @@ The reason for the different setups using different spark version is simply that
 * Hive metastore 3.1.2 (Hadoop 3.3.2)
 * Postgres 15.1
 * Minio latest version (Dockerfile will pull latest minio image)
-* Apache Superset 1.5.2
+* Apache Superset 2.0.1
 #### Python (Conda)
 * Spark 3.3.1 (Hadoop 3.3.2)
 * Delta lake 2.1.1
@@ -26,6 +26,8 @@ The reason for the different setups using different spark version is simply that
 * .NET Core 3.1
 * .NET Spark 2.1.1
 * Delta lake 2.0.1
+#### GPU
+* CUDA 11.4.0 (Can be changed to a different version in the build.sh file)
 
 **_NOTE:_** When installing Spark 3.2.1 with Hadoop 3.x pre compiled the file name in the archive says hadoop3.2. The actual spark installation actually comes with
 Hadoop 3.3.1 pre-compiled, and not 3.2.x. 
@@ -45,6 +47,21 @@ Microsoft.Spark version 2.1.1
 3. Start VSCode and attach to the running spark container
 4. Open the workspace folder in the container in VSCode
 5. Proceed as normal when developing in either python or .NET! (Important to note that this only tested with .NET Core 3.1 for now). There are example projects in the example folder that exemplify this.
+
+### Use GPU
+To enable GPU support in the docker container there are two things that are required:
+1. Add the -g\--gpu flag when running the build.sh file.
+2. Change the spark container description in the docker-compose file to include
+   ```
+   deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+   ```
+**_NOTE:_** This has not been tested with the .NET Spark container.
 
 ### Superset
 To connect the Apache Superset to the Spark SQL as database, configure with the SQL Alchemy string hive://spark:10000 (unless you've changed the spark container hostname).

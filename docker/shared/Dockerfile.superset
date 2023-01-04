@@ -25,7 +25,9 @@ RUN apt-get update \
     && pip install -U pip \
     && pip install --no-cache-dir \
         apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.0.1 \
-        sasl thrift_sasl psycopg2
+        sasl thrift_sasl psycopg2 \
+    && pip uninstall -y cryptography pyopenssl \
+    && pip install cryptography==3.4.7
 
 COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
 COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
