@@ -2,7 +2,7 @@ version: '3'
 
 services:
   postgres:
-    container_name: spark_postgres
+    container_name: spark-postgres
     build:
       context: ./shared
       dockerfile: Dockerfile.postgres
@@ -17,7 +17,7 @@ services:
 
   pgadmin:
     user: root
-    container_name: spark_pgadmin
+    container_name: spark-pgadmin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=pgadmin@nowhere.info
@@ -73,7 +73,7 @@ services:
         - SUPERSET_ADMIN_LAST_NAME=admin
         - SUPERSET_ADMIN_PWD=SupersecretAdminpassw0rd!
         - SUPERSET_ADMIN_EMAIL=admin@nowhere.org
-    image: superset:1.5.2
+    image: superset:2.0.1
     ports:
       - 8088:8088
     volumes:
