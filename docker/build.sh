@@ -89,7 +89,7 @@ build_image() {
 
     echo "Building ${image_name}"
 
-    ${cmd}
+    #${cmd}
 }
 
 #######################################
@@ -167,31 +167,22 @@ finish()
     exit ${result}
 }
 
-
-options=$(getopt -l "dotnet,conda,gpu" -o "dcg" -a -- "$@")
-
-eval set -- "$options"
-
-while true
-do 
-    case "${1}" in
-        -d|--dotnet)
+for arg in "$@"
+do
+    case "$arg" in
+        --dotnet|-d)
             build_dotnet=true
             echo "dotnet choosen"
             ;;
-        -c|--conda)
+        --conda|-c)
             build_conda=true
             echo "conda choosen"
             ;;
-        -g|--gpu)
+        --gpu|-g)
             use_gpu=true
             echo "gpu enabled"
             ;;
-        --)
-            shift
-            break;;
     esac
-    shift
 done
 
 main
