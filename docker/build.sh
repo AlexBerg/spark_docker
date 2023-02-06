@@ -89,7 +89,7 @@ build_image() {
 
     echo "Building ${image_name}"
 
-    #${cmd}
+    ${cmd}
 }
 
 #######################################
