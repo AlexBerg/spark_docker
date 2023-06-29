@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-ENV SUPERSET_VERSION=2.0.1
+ENV SUPERSET_VERSION=2.1.0
 ENV SUPERSET_HOME=/superset
 
 ARG SUPERSET_SECRET_KEY=Supersecretkey!
@@ -24,8 +24,8 @@ RUN apt-get update \
         libpq-dev \
     && pip install -U pip \
     && pip install --no-cache-dir \
-        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.0.1 \
-        sasl thrift_sasl psycopg2 cryptography==3.4.7 WTForms==2.3.0
+        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.1.1 \
+        sasl thrift_sasl psycopg2 cryptography==39.0.1 WTForms==2.3.3
 
 COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
 COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
