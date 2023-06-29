@@ -1,8 +1,8 @@
 FROM java-base:8
 
 ARG HIVE_USER_PASSWORD=Supersecretpassw0rd!
-ARG HADOOP_VERSION=3.3.2
-ARG HIVE_VERSION=3.1.2
+ARG HADOOP_VERSION=3.3.4
+ARG HIVE_VERSION=3.1.3
 
 RUN apt-get update \
     && apt-get install -y openssh-server \
@@ -34,7 +34,7 @@ RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastor
     && wget https://jdbc.postgresql.org/download/postgresql-42.5.1.jar \
     # # JAR files for Amazon S3 (required for connecting to Minio as warehouse)
     && wget https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/${HADOOP_VERSION}/hadoop-aws-${HADOOP_VERSION}.jar \
-    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.1026/aws-java-sdk-bundle-1.11.1026.jar \
+    && wget https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar \
     && mv *.jar opt/hive/lib
 
 COPY templates/hive-site.xml /opt/hive/conf/hive-site.xml

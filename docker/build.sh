@@ -7,7 +7,7 @@ set -o errexit # abort on nonzero exit status
 set -o nounset # abort on unbound variable
 set -o pipefail # dont hide errors within pipes
 
-readonly conda_apache_spark_version=3.3.1
+readonly conda_apache_spark_version=3.4.1
 readonly dotnet_apache_spark_version=3.2.1
 readonly conda_hadoop_short_version=3
 readonly dotnet_hadoop_short_version=3.2

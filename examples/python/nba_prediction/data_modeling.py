@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
 
-_path_to_raw = "shared_datasets/"
+_path_to_raw = "../shared_datasets/"
 
 def check_if_nba_tables_exist(spark: SparkSession) -> bool:
     table_names = ["Teams", "TeamSeasonStats", "Players", "PlayerSeasonAwardShare", "PlayerSeasonAdvancedStats",

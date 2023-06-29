@@ -34,7 +34,7 @@ services:
       dockerfile: ./spark_conda/Dockerfile.conda
       args:
         - HIVE_USER_PASSWORD=Supersecretpassw0rd!
-    image: spark-conda:3.3.1
+    image: spark-conda:3.4.1
     ports: 
       - 4040:4040
     hostname: spark
