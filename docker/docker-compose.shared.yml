@@ -73,7 +73,7 @@ services:
         - SUPERSET_ADMIN_LAST_NAME=admin
         - SUPERSET_ADMIN_PWD=SupersecretAdminpassw0rd!
         - SUPERSET_ADMIN_EMAIL=admin@nowhere.org
-    image: superset:2.0.1
+    image: superset:2.1.0
     ports:
       - 8088:8088
     volumes:

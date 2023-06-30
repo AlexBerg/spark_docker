@@ -40,7 +40,7 @@ Microsoft.Spark version 2.1.1
 
 
 ## How to use
-1. Run the build.sh file found in the docker folder with either -c\--conda or -d\--dotnet flags to build the images for either python based development or
+1. Run the build.sh file found in the docker folder with either -c/--conda or -d/--dotnet flags to build the images for either python based development or
    .NET based development respectivly.
 2. Run either <b>docker compose -f docker-compose.shared.yml -f docker-compose.spark-conda.yml up --build -d</b> or <b>docker compose -f docker-compose.shared.yml -f docker-compose.spark-dotnet.yml up --build -d</b> in the docker folder to create\update and start the containers for the respective environment. The --build flag is to makes sure it rebuilds the images to use the passwords passed as arguments from the compose file.
 3. Start VSCode and attach to the running spark container
@@ -49,7 +49,7 @@ Microsoft.Spark version 2.1.1
 
 ### Use GPU
 To enable GPU support in the docker container there are two things that are required:
-1. Add the -g\--gpu flag when running the build.sh file.
+1. Add the -g/--gpu flag when running the build.sh file.
 2. Change the spark container description in the docker-compose file to include
    ```
    deploy:
