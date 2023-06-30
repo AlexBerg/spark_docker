@@ -24,8 +24,8 @@ RUN apt-get update \
         libpq-dev \
     && pip install -U pip \
     && pip install --no-cache-dir \
-        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow markupsafe==2.1.1 \
-        sasl thrift_sasl psycopg2 cryptography==39.0.1 WTForms==2.3.3
+        apache-superset==${SUPERSET_VERSION} 'pyhive[sparksql]' pillow marshmallow-enum markupsafe==2.1.1 \
+        sasl thrift_sasl psycopg2 cryptography==39.0.1 WTForms==2.3.3 sqlparse==0.4.3 marshmallow==3.19.0
 
 COPY templates/superset-scripts/superset_config.py /superset_config/superset_config.py
 COPY templates/superset-scripts/init-superset.sh /scripts/init-superset.sh
